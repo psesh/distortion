@@ -1,0 +1,1 @@
+Note that the ``Span'' column corresponds to the non-dimensional radius. 
