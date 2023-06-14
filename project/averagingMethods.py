@@ -3,7 +3,7 @@ averagingMethods.py
 ======================
 Functions and Script to calculate various averages from pressure rake data
 """
-
+import pandas as pd
 import numpy as np
 
 
@@ -12,6 +12,8 @@ def areaWeightedAvg(filename, hubRadius, casingRadius):
     Each probe is assigned an annular sector, whose extents defined by the angles and radii midway between adjacent
     probes. Average pressure is found by weighing each probe pressure by their assigned annular sectors.
 
+    :math:`A = \sum_{i=1}^{N} p_i \gamma_i` where :math:`p_i` are individual measurements and :math:`\gamma_i` are the associated weights.
+        
     :param filename: The name of the .csv file containing pressure probe data. Column Format: [Probe Number, Span, Theta(radians), Pressure). Must be in same folder as areaWeightedAverage.py
     :type filename: string
     :param hubRadius: Radius of hub outer edge
@@ -21,13 +23,18 @@ def areaWeightedAvg(filename, hubRadius, casingRadius):
     :return: A single averaged pressure value
     :rtype: float
     """
-    if filename[-4:] != '.csv':
-        filename = filename + '.csv'
-    data = np.genfromtxt(filename, delimiter=',')
-    data = np.delete(data, 0, axis=0)
 
-    data = data[data[:, 1].argsort()]  # sorting by span
-    data = data[data[:, 2].argsort(kind='mergesort')]  # sorting by theta
+    # The lines below should be repalced with pandas directly, i.e.,
+    df = pd.read_csv(filename)
+    # etc
+    
+    #if filename[-4:] != '.csv':
+    #    filename = filename + '.csv'
+    #data = np.genfromtxt(filename, delimiter=',')
+    #data = np.delete(data, 0, axis=0)
+
+    #data = data[data[:, 1].argsort()]  # sorting by span
+    #data = data[data[:, 2].argsort(kind='mergesort')]  # sorting by theta
 
     thetasRaw = data[:, 2]  # Raw list of thetas from sorted csv (has repeats)
     diff_list = np.diff(thetasRaw)  # Finding differences between adjacent theta values
