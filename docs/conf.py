@@ -20,7 +20,7 @@ release = '0.01'
 
 extensions = [
     'sphinx.ext.autodoc'
-    
+
 ]
 
 templates_path = ['_templates']

@@ -6,8 +6,9 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Python Module Index &#8212; Distortion Indices 0.01 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Code &#8212; Distortion Indices 0.01 documentation</title>
   
   
   
@@ -36,14 +37,13 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'py-modindex';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'csvToPandas';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-
+    <link rel="next" title="Code" href="averagingMethods.html" />
+    <link rel="prev" title="Welcome to Distortion Indices’s documentation!" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-
-
   </head>
   
   
@@ -123,8 +123,8 @@
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="csvToPandas.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Code
                       </a>
                     </li>
@@ -132,13 +132,6 @@
 
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="averagingMethods.html">
-                        Code
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="indices.html">
                         Code
                       </a>
                     </li>
@@ -191,6 +184,10 @@ document.write(`
   
 
   
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
 </div>
 
     </nav>
@@ -216,8 +213,8 @@ document.write(`
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="csvToPandas.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Code
                       </a>
                     </li>
@@ -225,13 +222,6 @@ document.write(`
 
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="averagingMethods.html">
-                        Code
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="indices.html">
                         Code
                       </a>
                     </li>
@@ -275,7 +265,33 @@ document.write(`
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article"></div>
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Code</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
               
               
               
@@ -283,29 +299,32 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
+  <section id="module-project.csvToPandas">
+<span id="code"></span><h1>Code<a class="headerlink" href="#module-project.csvToPandas" title="Permalink to this heading">#</a></h1>
+<section id="csvtopanda-py">
+<h2>csvToPanda.py<a class="headerlink" href="#csvtopanda-py" title="Permalink to this heading">#</a></h2>
+<p>Converts a csv of rake total pressure data into a pandas dataframe and sorts it for other functions.
+.csv should include header with column order [Rake Number, Span, Theta (rad), Pressure (units)]</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="project.csvToPandas.csvToPandas">
+<span class="sig-prename descclassname"><span class="pre">project.csvToPandas.</span></span><span class="sig-name descname"><span class="pre">csvToPandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#project.csvToPandas.csvToPandas" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates pandas dataframe from csv pressure rake data
+.csv must have header with column order [Rake Number, Span, Theta (rad), Pressure (units)]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>string</em>) – Name of .csv file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted pandas dataframe of pressure rake data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pandas dataframe</p>
+</dd>
+</dl>
+</dd></dl>
 
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-p"><strong>p</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-p"><td></td><td>
-       <strong>p</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">project</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="csvToPandas.html#module-project.csvToPandas"><code class="xref">project.csvToPandas</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+</section>
 
 
                 </article>
@@ -318,6 +337,24 @@ document.write(`
   
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Welcome to Distortion Indices’s documentation!</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="averagingMethods.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Code</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div></div>
   
 </div>
@@ -327,6 +364,29 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#csvtopanda-py">csvToPanda.py</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#project.csvToPandas.csvToPandas"><code class="docutils literal notranslate"><span class="pre">csvToPandas()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="_sources/csvToPandas.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
               
             
           </div>

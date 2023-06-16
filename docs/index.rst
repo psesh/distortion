@@ -10,7 +10,9 @@ Welcome to Distortion Indices's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   reference_index
+   csvToPandas
+   averagingMethods
+   indices
 
 
 Indices and tables
