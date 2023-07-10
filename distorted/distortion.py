@@ -6,6 +6,15 @@ import matplotlib.pyplot as plt
 
 
 class Distortion:
+    """
+    This class defines a Distortion object.
+
+    Parameters
+    ----------
+    dataframe : string
+        CSV filename.
+    
+    """
     def __init__(self, dataframe):
         self.initialDF = dataframe
 
@@ -27,7 +36,14 @@ class Distortion:
         return self.df
 
     def ARP1420(self):
+        """
+        Calculates ARP1420.
 
+        Returns
+        -------
+        numpy.ndarray
+        
+        """
         spans = self.df['Span'].drop_duplicates()
         circumIntenseOutList = []
         circumExtentOutList = []

@@ -1,0 +1,7 @@
+Calculating distortion metrics
+==================================
+Main file that calculates various distortion metrics given data.
+
+.. automodule:: distorted.distortion
+    :members:
+ 

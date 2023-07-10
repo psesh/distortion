@@ -1,0 +1,27 @@
+.. Distortion Indices documentation master file, created by
+   sphinx-quickstart on Wed Jun  7 01:33:29 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Distorted
+==============================================
+The python package ``Distorted`` represents a set of utilities for generating distortion metrics for input stagnation pressure, stagnation temperature, and velocity vector data. Redaers may find the following references useful:
+
+
+
+References
+"""""""""""
+- SAE (2017), *Inlet Total-Pressure-Distortion Considerations for Gas-Turbine Engines*, AIR1419, Technical report.
+- SAE (2022), A Methodology for Assessing Inlet Swirl Distortion, AIR5686, Technical report.
+- SAE (2017), Gas Turbine Engine Inlet Flow Distortion Guidelines, ARP1420, Technical report.
+
+Documentation
+"""""""""""""""
+
+Code documentation for :code:`Distorted` can be found by clicking on the links below.
+
+
+.. toctree::
+   :maxdepth: 1
+
+   distortion
