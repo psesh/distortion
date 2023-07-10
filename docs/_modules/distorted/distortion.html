@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>distorted.distortion &#8212; Documentation | Distorted</title>
+    <title>distorted.distortion &#8212; Distorted</title>
   
   
   
@@ -103,7 +103,7 @@
   
   
   
-    <p class="title logo__title">Documentation | Distorted</p>
+    <p class="title logo__title">Distorted</p>
   
 </a></div>
     
@@ -123,6 +123,19 @@
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../distortion.html">
+                        Calculating distortion metrics
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../tutorials.html">
+                        Tutorials
+                      </a>
+                    </li>
+                
   </ul>
 </nav></div>
       
@@ -196,6 +209,19 @@ document.write(`
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../distortion.html">
+                        Calculating distortion metrics
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../tutorials.html">
+                        Tutorials
+                      </a>
+                    </li>
+                
   </ul>
 </nav></div>
         
@@ -276,11 +302,9 @@ document.write(`
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
+<span class="kn">from</span> <span class="nn">distorted.plot</span> <span class="kn">import</span> <span class="n">plot_quantity</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-
-<div class="viewcode-block" id="Distortion"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion">[docs]</a><span class="k">class</span> <span class="nc">Distortion</span><span class="p">:</span>
+<div class="viewcode-block" id="Distortion"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion">[docs]</a><span class="k">class</span> <span class="nc">Distortion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class defines a Distortion object.</span>
 
@@ -310,7 +334,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">getDF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
 
-<div class="viewcode-block" id="Distortion.ARP1420"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion.ARP1420">[docs]</a>    <span class="k">def</span> <span class="nf">ARP1420</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Distortion.ARP1420"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.ARP1420">[docs]</a>    <span class="k">def</span> <span class="nf">ARP1420</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates ARP1420.</span>
 
@@ -468,6 +492,10 @@ document.write(`
                           <span class="s1">&#39;Multiple Per Rev&#39;</span><span class="p">,</span> <span class="s1">&#39;Radial Intensity&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
+<div class="viewcode-block" id="Distortion.plot_quantity"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.plot_quantity">[docs]</a>    <span class="k">def</span> <span class="nf">plot_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Plots the first few orthogonal polynomials. See :meth:`~equadratures.plot.plot_orthogonal_polynomials` for full description. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">plot_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+    
     <span class="k">def</span> <span class="nf">ARP1420RingPAV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
         <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRingData</span><span class="p">(</span><span class="n">span</span><span class="p">)</span>
         <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -493,7 +521,7 @@ document.write(`
         <span class="n">pressures</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span>
 
-<div class="viewcode-block" id="Distortion.pDeltaPavg1"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion.pDeltaPavg1">[docs]</a>    <span class="k">def</span> <span class="nf">pDeltaPavg1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Distortion.pDeltaPavg1"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.pDeltaPavg1">[docs]</a>    <span class="k">def</span> <span class="nf">pDeltaPavg1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a simple distortion index</span>
 
 <span class="sd">        :math:`\\frac{\\Delta P_{max-min}}{\\bar{P}}=\\frac{P_{max}-P_{min}}{P_{avg}}`</span>
@@ -514,7 +542,7 @@ document.write(`
         <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">pMax</span> <span class="o">-</span> <span class="n">pMin</span><span class="p">)</span> <span class="o">/</span> <span class="n">pAvg</span>
         <span class="k">return</span> <span class="n">index</span></div>
 
-<div class="viewcode-block" id="Distortion.pDeltaPavg2"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion.pDeltaPavg2">[docs]</a>    <span class="k">def</span> <span class="nf">pDeltaPavg2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Distortion.pDeltaPavg2"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.pDeltaPavg2">[docs]</a>    <span class="k">def</span> <span class="nf">pDeltaPavg2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a simple distortion index</span>
 
 <span class="sd">        :math:`\\frac{\\Delta P_{avg-min}}{\\bar{P}}=\\frac{P_{avg}-P_{min}}{P_{avg}}`</span>
@@ -534,7 +562,7 @@ document.write(`
         <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">pAvg</span> <span class="o">-</span> <span class="n">pMin</span><span class="p">)</span> <span class="o">/</span> <span class="n">pAvg</span>
         <span class="k">return</span> <span class="n">index</span></div>
 
-<div class="viewcode-block" id="Distortion.RRCriticalAngle"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion.RRCriticalAngle">[docs]</a>    <span class="k">def</span> <span class="nf">RRCriticalAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Distortion.RRCriticalAngle"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.RRCriticalAngle">[docs]</a>    <span class="k">def</span> <span class="nf">RRCriticalAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Rolls-Royce critical angle index WORK IN PROGRESS</span>
 
 
@@ -552,7 +580,7 @@ document.write(`
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distortion.NAPCKTheta"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion.NAPCKTheta">[docs]</a>    <span class="k">def</span> <span class="nf">NAPCKTheta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Distortion.NAPCKTheta"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.NAPCKTheta">[docs]</a>    <span class="k">def</span> <span class="nf">NAPCKTheta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Naval Air Propulsion Center KTheta index WORK IN PROGRESS</span>
 
 <span class="sd">        :math:`K\\Theta = \\frac{\\frac{\\Theta^{-}}{2\\pi}[\\sqrt{q/P}]_{ref}}{\\sqrt{\\frac{q}{P}/\\frac{\\bar{q}}{\\bar{P}}}}`</span>
@@ -571,7 +599,7 @@ document.write(`
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
 
-<div class="viewcode-block" id="Distortion.AVCOLycomingDI"><a class="viewcode-back" href="../../index.html#distorted.distortion.Distortion.AVCOLycomingDI">[docs]</a>    <span class="k">def</span> <span class="nf">AVCOLycomingDI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Distortion.AVCOLycomingDI"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.AVCOLycomingDI">[docs]</a>    <span class="k">def</span> <span class="nf">AVCOLycomingDI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the AVCO Lycoming DI index WORK IN PROGRESS</span>
 
 <span class="sd">        :math:`DI = (\\frac{P_{avg}-P_{low\\:avg}}{P_{avg}})\\sqrt{\\overline{M*E*R}}`</span>

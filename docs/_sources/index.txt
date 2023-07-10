@@ -25,3 +25,4 @@ Code documentation for :code:`Distorted` can be found by clicking on the links b
    :maxdepth: 1
 
    distortion
+   tutorials

@@ -20,6 +20,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
+    'nbsphinx',
 ] #TODO - prune unused extensions
 master_doc = 'index'
 html_title = 'Distorted'
@@ -27,7 +28,6 @@ html_theme = 'pydata_sphinx_theme'
 language = None
 exclude_patterns = [u'_docsbuild', 'Thumbs.db', '.DS_Store']
 source_suffix = '.txt'
-htmlhelp_basename = 'equadraturesdoc'
 latex_elements = {
     'papersize': 'a4paper',
     'pointsize': '12pt',
@@ -57,6 +57,7 @@ nbsphinx_execute_arguments = [
 ]
 nbsphinx_input_prompt = 'In [%s]:'
 nbsphinx_output_prompt = 'Out[%s]:'
+
 
 
 # sphinxcontrib.bibtex setting

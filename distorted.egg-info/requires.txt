@@ -1,0 +1,6 @@
+numpy
+scipy>=0.15.0
+matplotlib
+seaborn
+requests>=2.11.1
+graphviz

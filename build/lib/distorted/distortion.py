@@ -1,11 +1,9 @@
 import pandas as pd
 import numpy as np
 from scipy.integrate import quad
+from distorted.plot import plot_quantity
 
-import matplotlib.pyplot as plt
-
-
-class Distortion:
+class Distortion(object):
     """
     This class defines a Distortion object.
 
@@ -193,6 +191,10 @@ class Distortion:
                           'Multiple Per Rev', 'Radial Intensity']
         return output
 
+    def plot_quantity(self, name, ax=None, show=True):
+        """ Plots the first few orthogonal polynomials. See :meth:`~equadratures.plot.plot_orthogonal_polynomials` for full description. """
+        return plot_quantity(self, name)
+    
     def ARP1420RingPAV(self, span):
         thetas, pressures = self.getRingData(span)
         thetas = np.concatenate((thetas, [thetas[0] + 2 * np.pi]), axis=0)
