@@ -4,6 +4,7 @@ from scipy.integrate import quad
 from distorted.plot import plot_quantity
 import matplotlib.pyplot as plt  # for testing
 
+
 class Distortion(object):
     """
     This class defines a Distortion object.
@@ -14,10 +15,11 @@ class Distortion(object):
         CSV filename.
     
     """
+
     def __init__(self, dataframe):
         self.initialDF = dataframe
 
-        probeNumber = self.initialDF[['Probe']]
+        probeNumber = self.initialDF[['Probe']]  # Probably not necessary - might remove
         span = self.initialDF[['Span']]
         theta = self.initialDF[['Theta (radians)']]
         totalPressure = self.initialDF[['Pressure (kPa)']]
@@ -36,6 +38,12 @@ class Distortion(object):
             staticPressure = self.initialDF[['Static Pressure (kPa)']]
             staticPressure.columns = ['Static Pressure']
             self.df = pd.concat([self.df, staticPressure], axis=1)
+        except KeyError:
+            pass
+        try:
+            velocity = self.initialDF[['Velocity']]
+            velocity.columns = ['Velocity']
+            self.df = pd.concat([self.df, velocity], axis=1)
         except KeyError:
             pass
 
@@ -58,10 +66,21 @@ class Distortion(object):
         :return: Calculated Distortion Index
         :rtype: float
         """
+        testSP = False
+        testV = False
         try:
             testDF = self.df['Static Pressure']
-        except KeyError:
-            print('The Rolls Royce DC60 metric requires static pressure data')
+            testSP = True
+        except:
+            pass
+        try:
+            testDF = self.df['Velocity']
+            testV = True
+        except:
+            pass
+
+        if testSP == False and testV == False:
+            print('Rolls Royce DC60 metric requires either Static Pressure or Velocity data')
             return
 
         self.df = pd.concat([self.df, self.get_areaWeights()], axis=1)
@@ -69,10 +88,10 @@ class Distortion(object):
         critTheta = 60 * (np.pi / 180)
         probeAngles = self.df['Theta'].drop_duplicates().to_list()
         probeAngles = probeAngles + [2 * np.pi]
-        sectorNumbers = list(range(1, len(probeAngles), 1))
+        sectorNumbers = list(range(0, len(probeAngles) - 1, 1))
         sectorDifferences = np.diff(probeAngles)
-        halfDistance = sectorDifferences / 2
-        sectorAngles = probeAngles[0:-1] + halfDistance
+        halfAngle = sectorDifferences / 2
+        sectorAngles = probeAngles[0:-1] + halfAngle
         sectorAngles = list(sectorAngles)
         sectorWidths = list(np.diff(sectorAngles))
         secWidth1 = sectorAngles[0] - sectorAngles[-1]
@@ -80,14 +99,17 @@ class Distortion(object):
             secWidth1 += 2 * np.pi
         sectorWidths = [secWidth1] + sectorWidths
         probeAngles = probeAngles[0:-1]
+        sectorEnds = sectorAngles
+        sectorStarts = [sectorAngles[-1]] + sectorAngles[0:-1]
 
-        sectorData = pd.DataFrame({'Sector Number': sectorNumbers, 'Probe Angle': probeAngles, 'Sector Width': sectorWidths})
+        sectorData = pd.DataFrame(
+            {'Sector Number': sectorNumbers, 'Probe Angle': probeAngles, 'Sector Width': sectorWidths,
+             'Sector Start': sectorStarts, 'Sector End': sectorEnds})
 
-        # Testing
         # fig = plt.figure()
         # ax = fig.add_subplot(projection='polar')
-        # r = [5]*len(probeAngles)
-        # c = ax.scatter(probeAngles, r)
+        # r = [5]*len(sectorData['Probe Angle'])
+        # c = ax.scatter(sectorData['Probe Angle'], r)
         # r = [4]*len(sectorAngles)
         # d = ax.scatter(sectorAngles, r)
         # e = ax.scatter(critTheta,3)
@@ -95,53 +117,87 @@ class Distortion(object):
         # ax.set_theta_offset(np.pi / 2.0)
         # plt.show()
 
-
         allData = self.df.copy(deep=True)
         allData['Fractional Weights'] = 0
         iterations = 1000
         testAngles = np.linspace(0, 2 * np.pi - .00001, iterations)
         sectorAreaWeightedMeanTotalPressures = []
+
+        areaWeights = allData['Area Weights'].to_list()
+        thetas = allData['Theta']
+
         for angle in testAngles:
+            allData['Fractional Weights'] = 0
             startAngle = angle
-            realEndAngle = angle + critTheta
-            if realEndAngle > 2 * np.pi:
-                endAngle = 2 * np.pi
-            else:
-                endAngle = realEndAngle
-            # Need to consider cases where end angle wraps around circle
-            sectorAnglesLoop = sectorAngles
-            sectorAnglesLoop = sectorAnglesLoop + [startAngle, endAngle]
-            sectorAnglesLoop = np.sort(sectorAnglesLoop)
-            startIndices = np.where(sectorAnglesLoop == startAngle)[0]
-            if len(startIndices) > 1:
-                startIndex = startIndices[1]
-            else:
-                startIndex = startIndices[0]
-            endIndices = np.where(sectorAnglesLoop == endAngle)[0]
-            endIndex = endIndices[0]
-            #print(startIndex,'  ',endIndex)
-            if endIndex - startIndex == 1:
-                # Case 1, both cutoff lines are within one annular sector
+            endAngle = angle + critTheta
+            while endAngle > 2 * np.pi:
+                endAngle -= 2 * np.pi
+
+            startSectorNum = None
+            endSectorNum = None
+            for i in range(sectorData.shape[0]):
+                # print(startAngle,'   ',endAngle)
+                if sectorData.iloc[[i]].iloc[0]['Sector Start'] > sectorData.iloc[[i]].iloc[0]['Sector End']:
+                    if sectorData.iloc[[i]].iloc[0]['Sector Start'] < startAngle or sectorData.iloc[[i]].iloc[0][
+                        'Sector End'] > startAngle:
+                        startSectorNum = i
+                    if sectorData.iloc[[i]].iloc[0]['Sector Start'] < endAngle or sectorData.iloc[[i]].iloc[0][
+                        'Sector End'] > endAngle:
+                        endSectorNum = i
+                else:
+                    if sectorData.iloc[[i]].iloc[0]['Sector Start'] < startAngle < sectorData.iloc[[i]].iloc[0][
+                        'Sector End']:
+                        startSectorNum = i
+                    if sectorData.iloc[[i]].iloc[0]['Sector Start'] < endAngle < sectorData.iloc[[i]].iloc[0][
+                        'Sector End']:
+                        endSectorNum = i
+
+            for i in range(startSectorNum + 1, endSectorNum - 1):
+                probeAng = sectorData.iloc[[i]].iloc[0]['Probe Angle']
+                allData.loc[thetas == probeAng, 'Fractional Weights'] = 1
+
+            if startSectorNum == endSectorNum:
+                total = sectorData.iloc[[startSectorNum]].iloc[0]['Sector Width']
                 frac = endAngle - startAngle
+                while frac < 0:
+                    frac += 2 * np.pi
+                weight = frac / total
+                probeAng = sectorData.iloc[[startSectorNum]].iloc[0]['Probe Angle']
+                allData.loc[thetas == probeAng, 'Fractional Weights'] = weight
+            else:
+                leftTotal = sectorData.iloc[[startSectorNum]].iloc[0]['Sector Width']
+                rightTotal = sectorData.iloc[[endSectorNum]].iloc[0]['Sector Width']
+                leftFrac = sectorData.iloc[[startSectorNum]].iloc[0]['Sector End'] - startAngle
+                rightFrac = endAngle - sectorData.iloc[[endSectorNum]].iloc[0]['Sector Start']
+                while leftFrac < 0:
+                    leftFrac += 2 * np.pi
+                while rightFrac < 0:
+                    rightFrac += 2 * np.pi
+                leftWeight = leftFrac / leftTotal
+                rightWeight = rightFrac / rightTotal
+                leftProbeAng = sectorData.iloc[[startSectorNum]].iloc[0]['Probe Angle']
+                rightProbeAng = sectorData.iloc[[endSectorNum]].iloc[0]['Probe Angle']
+                allData.loc[thetas == leftProbeAng, 'Fractional Weights'] = leftWeight
+                allData.loc[thetas == rightProbeAng, 'Fractional Weights'] = rightWeight
 
-                probeAngles = np.asarray(probeAngles)
-                idx = (np.abs(probeAngles-startAngle)).argmin()
-                width = sectorData.iloc[[idx]].iloc[0]['Sector Width']
-                fractionalWeight = frac / width
-                print(fractionalWeight)
+            finalWeightList = [i1 * i2 for i1, i2 in
+                               zip(areaWeights, allData['Fractional Weights'].to_list())]
+            weightSum = np.sum(finalWeightList)
+            areaAveragePressure = round(np.dot(finalWeightList, allData['Total Pressure'].to_list()) / weightSum, 7)
+            sectorAreaWeightedMeanTotalPressures = sectorAreaWeightedMeanTotalPressures + [areaAveragePressure]
+        minSectorAvgPressure = min(sectorAreaWeightedMeanTotalPressures)
+        inletAreaAvgPressure = np.dot(allData['Total Pressure'].to_list(), allData['Area Weights'].to_list())
 
+        if testV:
+            avgVelHead = np.dot(allData['Velocity'].to_list(), areaWeights)
+        else:
+            density = 1.22500 #kg/m^3 standard atmosphere sea level
+            avgStaticPressure = np.dot(allData['Static Pressure'].to_list(),areaWeights)
+            avgTotalPressure = np.dot(allData['Total Pressure'].to_list(),areaWeights)
+            avgVelHead = np.sqrt((2/density)*(avgTotalPressure-avgStaticPressure)*1000)
+        index = (inletAreaAvgPressure-minSectorAvgPressure)/avgVelHead
+        return index
 
-            elif startIndex - endIndex == 2:
-                # Case 2, there is one 'sector line' between cutoff angles
-                leftFrac = sectorAnglesLoop[startIndex + 1] - startAngle
-                leftFracSectionTotal = sectorAnglesLoop[startIndex + 1] - sectorAnglesLoop[startIndex - 1]
-                rightFrac = endAngle - sectorAnglesLoop[endIndex - 1]
-            elif startIndex - endIndex > 2:
-                # Case 3, there are multiple 'sector lines' between cutoff angles
-                print()
-
-            # print('StartAngle = ', startAngle, '  Sector angle to right = ', sectorAnglesLoop[startIndex + 1])
-            # print('EndAngle = ', endAngle, '  Sector angle to left = ', sectorAnglesLoop[endIndex - 1])
 
     def ARP1420(self):
         """
@@ -449,12 +505,12 @@ class Distortion(object):
         # List of the relevant ring areas from center outwards
         effectiveArea = sum(ringAreas)  # Sum of rings to find effective area (area between casing and hub)
         weights = []
-        pressures = []
+        # pressures = []
         for i, pressure in enumerate(self.df['Total Pressure'].to_numpy()):
             ringNumber = (i + 1) % len(ringAreas) - 1
             angleNumber = (i) // len(ringAreas)
             weights = weights + [(ringAreas[ringNumber] * (sectorAngles[angleNumber] / (2 * np.pi))) / effectiveArea]
-            pressures = pressures + [pressure]
+            # pressures = pressures + [pressure]
         weights = pd.DataFrame(weights, columns=['Area Weights'])
         return weights
 

@@ -2,7 +2,7 @@ import pandas as pd
 from distorted import Distortion
 import matplotlib.pyplot as plt
 
-csvDF = pd.read_csv('data/sample.csv')
+csvDF = pd.read_csv('data/test1.csv')
 distortionObj = Distortion(csvDF)
 
 
@@ -14,7 +14,7 @@ distortionObj = Distortion(csvDF)
 #print(distortionObj.get_areaWeightedAverage())
 #print(distortionObj.ARP1420PFAVEqualRingArea())
 #print(distortionObj.ARP1420().to_string())
-distortionObj.RollsRoyceDC60()
+print(distortionObj.RollsRoyceDC60())
 
 
 

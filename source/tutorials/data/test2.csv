@@ -1,0 +1,4 @@
+﻿Probe,Span,Theta (radians),Pressure (kPa),Static Pressure (kPa)
+13,0.4,3.141592654,100,100
+14,0.7,3.141592654,100,20
+15,0.9,3.141592654,100,60
