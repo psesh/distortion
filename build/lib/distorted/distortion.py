@@ -41,7 +41,7 @@ class Distortion(object):
         except KeyError:
             pass
         try:
-            velocity = self.initialDF[['Velocity']]
+            velocity = self.initialDF[['Velocity m/s']]
             velocity.columns = ['Velocity']
             self.df = pd.concat([self.df, velocity], axis=1)
         except KeyError:
@@ -106,17 +106,6 @@ class Distortion(object):
             {'Sector Number': sectorNumbers, 'Probe Angle': probeAngles, 'Sector Width': sectorWidths,
              'Sector Start': sectorStarts, 'Sector End': sectorEnds})
 
-        # fig = plt.figure()
-        # ax = fig.add_subplot(projection='polar')
-        # r = [5]*len(sectorData['Probe Angle'])
-        # c = ax.scatter(sectorData['Probe Angle'], r)
-        # r = [4]*len(sectorAngles)
-        # d = ax.scatter(sectorAngles, r)
-        # e = ax.scatter(critTheta,3)
-        # ax.set_theta_direction(-1)
-        # ax.set_theta_offset(np.pi / 2.0)
-        # plt.show()
-
         allData = self.df.copy(deep=True)
         allData['Fractional Weights'] = 0
         iterations = 1000
@@ -136,7 +125,6 @@ class Distortion(object):
             startSectorNum = None
             endSectorNum = None
             for i in range(sectorData.shape[0]):
-                # print(startAngle,'   ',endAngle)
                 if sectorData.iloc[[i]].iloc[0]['Sector Start'] > sectorData.iloc[[i]].iloc[0]['Sector End']:
                     if sectorData.iloc[[i]].iloc[0]['Sector Start'] < startAngle or sectorData.iloc[[i]].iloc[0][
                         'Sector End'] > startAngle:
@@ -194,10 +182,10 @@ class Distortion(object):
             density = 1.22500 #kg/m^3 standard atmosphere sea level
             avgStaticPressure = np.dot(allData['Static Pressure'].to_list(),areaWeights)
             avgTotalPressure = np.dot(allData['Total Pressure'].to_list(),areaWeights)
-            avgVelHead = np.sqrt((2/density)*(avgTotalPressure-avgStaticPressure)*1000)
+            avgVelHead = np.sqrt((2/density)*(avgTotalPressure-avgStaticPressure)*1000) #Assuming pressure in kpa
         index = (inletAreaAvgPressure-minSectorAvgPressure)/avgVelHead
         return index
-
+        # TODO: more testing of DC60
 
     def ARP1420(self):
         """
