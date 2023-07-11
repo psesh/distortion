@@ -2,7 +2,7 @@ import pandas as pd
 from distorted import Distortion
 import matplotlib.pyplot as plt
 
-csvDF = pd.read_csv('data/test1.csv')
+csvDF = pd.read_csv('data/sample.csv')
 distortionObj = Distortion(csvDF)
 
 

@@ -108,7 +108,7 @@ class Distortion(object):
 
         allData = self.df.copy(deep=True)
         allData['Fractional Weights'] = 0
-        iterations = 1000
+        iterations = 100 #TODO: Figure out how many iterations there should be
         testAngles = np.linspace(0, 2 * np.pi - .00001, iterations)
         sectorAreaWeightedMeanTotalPressures = []
 
@@ -177,12 +177,13 @@ class Distortion(object):
         inletAreaAvgPressure = np.dot(allData['Total Pressure'].to_list(), allData['Area Weights'].to_list())
 
         if testV:
-            avgVelHead = np.dot(allData['Velocity'].to_list(), areaWeights)
-        else:
             density = 1.22500 #kg/m^3 standard atmosphere sea level
+            avgVel = np.dot(allData['Velocity'].to_list(), areaWeights)
+            avgVelHead = .5*density*avgVel**2
+        else:
             avgStaticPressure = np.dot(allData['Static Pressure'].to_list(),areaWeights)
             avgTotalPressure = np.dot(allData['Total Pressure'].to_list(),areaWeights)
-            avgVelHead = np.sqrt((2/density)*(avgTotalPressure-avgStaticPressure)*1000) #Assuming pressure in kpa
+            avgVelHead = avgTotalPressure-avgStaticPressure
         index = (inletAreaAvgPressure-minSectorAvgPressure)/avgVelHead
         return index
         # TODO: more testing of DC60
