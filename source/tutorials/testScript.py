@@ -1,12 +1,10 @@
-from csvToDataframe import CSVToDataframe
-from distortion import Distortion
+import pandas as pd
+from distorted import Distortion
 import matplotlib.pyplot as plt
 
-csvDF = CSVToDataframe('figure15')
-distortionObj = Distortion(csvDF.getDataframe())
+csvDF = pd.read_csv('data/sample.csv')
+distortionObj = Distortion(csvDF)
 
-distortionObj.hubRadius = 1
-distortionObj.casingRadius = 5
 
 #print(csvDF.getDataframe())
 #print(distortionObj.getDF())
@@ -15,7 +13,8 @@ distortionObj.casingRadius = 5
 #print(distortionObj.get_radialAverage())
 #print(distortionObj.get_areaWeightedAverage())
 #print(distortionObj.ARP1420PFAVEqualRingArea())
-print(distortionObj.ARP1420().to_string())
+#print(distortionObj.ARP1420().to_string())
+distortionObj.RollsRoyceDC60()
 
 
 

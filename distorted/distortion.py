@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from scipy.integrate import quad
 from distorted.plot import plot_quantity
+import matplotlib.pyplot as plt  # for testing
 
 class Distortion(object):
     """
@@ -16,22 +17,131 @@ class Distortion(object):
     def __init__(self, dataframe):
         self.initialDF = dataframe
 
-        probeNumber = self.initialDF['Probe']
-        span = self.initialDF['Span']
-        theta = self.initialDF['Theta (radians)']
-        pressure = self.initialDF['Pressure (kPa)']
-        #TODO set up try/except cases for different possible column names
+        probeNumber = self.initialDF[['Probe']]
+        span = self.initialDF[['Span']]
+        theta = self.initialDF[['Theta (radians)']]
+        totalPressure = self.initialDF[['Pressure (kPa)']]
+        # TODO set up try/except cases for different possible column names
 
-        self.df = pd.concat([probeNumber, span, theta, pressure], axis=1)
-        self.df.columns = ['Number', 'Span', 'Theta', 'Pressure']
+        self.df = pd.concat([probeNumber, span, theta, totalPressure], axis=1)
+        self.df.columns = ['Number', 'Span', 'Theta', 'Total Pressure']
         self.df = self.df.sort_values(['Theta', 'Span'])
         self.df = self.df.reset_index(drop=True)
+        self.df['Theta'] -= self.df.at[0, 'Theta']
 
         self.hubRadius = 0
         self.casingRadius = 1
 
+        try:
+            staticPressure = self.initialDF[['Static Pressure (kPa)']]
+            staticPressure.columns = ['Static Pressure']
+            self.df = pd.concat([self.df, staticPressure], axis=1)
+        except KeyError:
+            pass
+
     def getDF(self):
         return self.df
+
+    def RollsRoyceDC60(self):
+        """Returns the Rolls-Royce DC60 index WORK IN PROGRESS
+
+        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
+
+        :math:`DC(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`
+
+        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
+
+        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is '\\Theta' critical
+
+        :math:`q_{avg}` = The area-weighted average velocity head over the engine inlet
+
+        :return: Calculated Distortion Index
+        :rtype: float
+        """
+        try:
+            testDF = self.df['Static Pressure']
+        except KeyError:
+            print('The Rolls Royce DC60 metric requires static pressure data')
+            return
+
+        self.df = pd.concat([self.df, self.get_areaWeights()], axis=1)
+
+        critTheta = 60 * (np.pi / 180)
+        probeAngles = self.df['Theta'].drop_duplicates().to_list()
+        probeAngles = probeAngles + [2 * np.pi]
+        sectorNumbers = list(range(1, len(probeAngles), 1))
+        sectorDifferences = np.diff(probeAngles)
+        halfDistance = sectorDifferences / 2
+        sectorAngles = probeAngles[0:-1] + halfDistance
+        sectorAngles = list(sectorAngles)
+        sectorWidths = list(np.diff(sectorAngles))
+        secWidth1 = sectorAngles[0] - sectorAngles[-1]
+        while secWidth1 < 0:
+            secWidth1 += 2 * np.pi
+        sectorWidths = [secWidth1] + sectorWidths
+        probeAngles = probeAngles[0:-1]
+
+        sectorData = pd.DataFrame({'Sector Number': sectorNumbers, 'Probe Angle': probeAngles, 'Sector Width': sectorWidths})
+
+        # Testing
+        # fig = plt.figure()
+        # ax = fig.add_subplot(projection='polar')
+        # r = [5]*len(probeAngles)
+        # c = ax.scatter(probeAngles, r)
+        # r = [4]*len(sectorAngles)
+        # d = ax.scatter(sectorAngles, r)
+        # e = ax.scatter(critTheta,3)
+        # ax.set_theta_direction(-1)
+        # ax.set_theta_offset(np.pi / 2.0)
+        # plt.show()
+
+
+        allData = self.df.copy(deep=True)
+        allData['Fractional Weights'] = 0
+        iterations = 1000
+        testAngles = np.linspace(0, 2 * np.pi - .00001, iterations)
+        sectorAreaWeightedMeanTotalPressures = []
+        for angle in testAngles:
+            startAngle = angle
+            realEndAngle = angle + critTheta
+            if realEndAngle > 2 * np.pi:
+                endAngle = 2 * np.pi
+            else:
+                endAngle = realEndAngle
+            # Need to consider cases where end angle wraps around circle
+            sectorAnglesLoop = sectorAngles
+            sectorAnglesLoop = sectorAnglesLoop + [startAngle, endAngle]
+            sectorAnglesLoop = np.sort(sectorAnglesLoop)
+            startIndices = np.where(sectorAnglesLoop == startAngle)[0]
+            if len(startIndices) > 1:
+                startIndex = startIndices[1]
+            else:
+                startIndex = startIndices[0]
+            endIndices = np.where(sectorAnglesLoop == endAngle)[0]
+            endIndex = endIndices[0]
+            #print(startIndex,'  ',endIndex)
+            if endIndex - startIndex == 1:
+                # Case 1, both cutoff lines are within one annular sector
+                frac = endAngle - startAngle
+
+                probeAngles = np.asarray(probeAngles)
+                idx = (np.abs(probeAngles-startAngle)).argmin()
+                width = sectorData.iloc[[idx]].iloc[0]['Sector Width']
+                fractionalWeight = frac / width
+                print(fractionalWeight)
+
+
+            elif startIndex - endIndex == 2:
+                # Case 2, there is one 'sector line' between cutoff angles
+                leftFrac = sectorAnglesLoop[startIndex + 1] - startAngle
+                leftFracSectionTotal = sectorAnglesLoop[startIndex + 1] - sectorAnglesLoop[startIndex - 1]
+                rightFrac = endAngle - sectorAnglesLoop[endIndex - 1]
+            elif startIndex - endIndex > 2:
+                # Case 3, there are multiple 'sector lines' between cutoff angles
+                print()
+
+            # print('StartAngle = ', startAngle, '  Sector angle to right = ', sectorAnglesLoop[startIndex + 1])
+            # print('EndAngle = ', endAngle, '  Sector angle to left = ', sectorAnglesLoop[endIndex - 1])
 
     def ARP1420(self):
         """
@@ -93,21 +203,21 @@ class Distortion(object):
             PAVLOW = None
             MPR = None
             if len(transitions) == 2:
-                #One-per-rev pattern
+                # One-per-rev pattern
                 MPR = 1
                 if aboveToBelowFirst:
                     [integral, error] = quad(f_interp, transitions[0], transitions[1], points=thetas)
-                    PAVLOW = (1/extent)*integral
+                    PAVLOW = (1 / extent) * integral
                 else:
                     [integral1, error] = quad(f_interp, 0, transitions[0], points=thetas)
-                    [integral2, error] = quad(f_interp, transitions[1], 2*np.pi, points=thetas)
-                    PAVLOW = (1/extent)*(integral1+integral2)
-                intensity = (PAV-PAVLOW)/PAV
+                    [integral2, error] = quad(f_interp, transitions[1], 2 * np.pi, points=thetas)
+                    PAVLOW = (1 / extent) * (integral1 + integral2)
+                intensity = (PAV - PAVLOW) / PAV
                 MPROutList = MPROutList + [MPR]
                 circumIntenseOutList = circumIntenseOutList + [intensity]
 
             elif min(highPExtent) < thetaMin:
-                #Multiple-per-rev pattern, high pressure extent < thetaMin
+                # Multiple-per-rev pattern, high pressure extent < thetaMin
                 MPR = 1
                 integralSum = 0
                 if aboveToBelowFirst:
@@ -116,11 +226,11 @@ class Distortion(object):
                         highBound = transitions[i + 1]
                         [integral, error] = quad(f_interp, lowBound, highBound, points=thetas)
                         integralSum = integralSum + integral
-                    PAVLOW = (1/extent)*integralSum
+                    PAVLOW = (1 / extent) * integralSum
                 else:
                     [integral1, error] = quad(f_interp, 0, transitions[0], points=thetas)
-                    [integral2, error] = quad(f_interp, transitions[-1], 2*np.pi, points=thetas)
-                    integralSum = integral1+integral2
+                    [integral2, error] = quad(f_interp, transitions[-1], 2 * np.pi, points=thetas)
+                    integralSum = integral1 + integral2
                     for i in range(1, len(transitions) - 2, 2):
                         lowBound = transitions[i]
                         highBound = transitions[i + 1]
@@ -131,7 +241,7 @@ class Distortion(object):
                 MPROutList = MPROutList + [MPR]
                 circumIntenseOutList = circumIntenseOutList + [intensity]
             else:
-                #Multiple-per-rev pattern, high pressure extent > thetaMin
+                # Multiple-per-rev pattern, high pressure extent > thetaMin
                 intensityList = []
                 extentWeightedIntensityList = []
                 extents = []
@@ -141,22 +251,23 @@ class Distortion(object):
                         lowBound = transitions[i]
                         highBound = transitions[i + 1]
                         [integral, error] = quad(f_interp, lowBound, highBound, points=thetas)
-                        PAVLOW = (1/lowPExtent[int(i/2)])*integral
-                        intensity = (PAV-PAVLOW)/PAV
+                        PAVLOW = (1 / lowPExtent[int(i / 2)]) * integral
+                        intensity = (PAV - PAVLOW) / PAV
                         intensityList = intensityList + [intensity]
-                        extentWeightedIntensityList = extentWeightedIntensityList + [intensity*lowPExtent[int(i/2)]]
-                        extents = extents + [lowPExtent[int(i/2)]]
+                        extentWeightedIntensityList = extentWeightedIntensityList + [intensity * lowPExtent[int(i / 2)]]
+                        extents = extents + [lowPExtent[int(i / 2)]]
                 else:
                     for i in range(1, len(transitions) - 2, 2):
                         lowBound = transitions[i]
                         highBound = transitions[i + 1]
                         [integral, error] = quad(f_interp, lowBound, highBound, points=thetas)
                         integralSum = integralSum + integral
-                        PAVLOW = (1 / lowPExtent[int(i%2+1)]) * integral
+                        PAVLOW = (1 / lowPExtent[int(i % 2 + 1)]) * integral
                         intensity = (PAV - PAVLOW) / PAV
                         intensityList = intensityList + [intensity]
-                        extentWeightedIntensityList = extentWeightedIntensityList + [intensity * lowPExtent[int(i%2+1)]]
-                        extents = extents + [lowPExtent[int(i%2+1)]]
+                        extentWeightedIntensityList = extentWeightedIntensityList + [
+                            intensity * lowPExtent[int(i % 2 + 1)]]
+                        extents = extents + [lowPExtent[int(i % 2 + 1)]]
                     [integral1, error] = quad(f_interp, 0, transitions[0], points=thetas)
                     [integral2, error] = quad(f_interp, transitions[-1], 2 * np.pi, points=thetas)
                     integralSum = integral1 + integral2
@@ -171,17 +282,17 @@ class Distortion(object):
                 index = pd.Series(extentWeightedIntensityList).idxmax()
                 intensity = intensityList[index]
                 extent = extents[index]
-                MPR = sum(extentWeightedIntensityList)/extentWeightedIntensityList[index]
+                MPR = sum(extentWeightedIntensityList) / extentWeightedIntensityList[index]
                 MPROutList = MPROutList + [MPR]
                 circumIntenseOutList = circumIntenseOutList + [intensity]
 
             circumExtentOutList = circumExtentOutList + [extent]
 
             PFAV = self.ARP1420PFAVEqualRingArea()
-            radialIntensity = (PFAV-PAV)/PFAV
+            radialIntensity = (PFAV - PAV) / PFAV
             radialIntenseOutList = radialIntenseOutList + [radialIntensity]
 
-        circumExtentOutList = [i*(180/np.pi) for i in circumExtentOutList]
+        circumExtentOutList = [i * (180 / np.pi) for i in circumExtentOutList]
         circumIntense = pd.DataFrame({'circumIntense': circumIntenseOutList})
         circumExtent = pd.DataFrame({'circumExtent': circumExtentOutList})
         MPR = pd.DataFrame({'MPR': MPROutList})
@@ -194,7 +305,7 @@ class Distortion(object):
     def plot_quantity(self, name, ax=None, show=True):
         """ Plots the first few orthogonal polynomials. See :meth:`~equadratures.plot.plot_orthogonal_polynomials` for full description. """
         return plot_quantity(self, name)
-    
+
     def ARP1420RingPAV(self, span):
         thetas, pressures = self.getRingData(span)
         thetas = np.concatenate((thetas, [thetas[0] + 2 * np.pi]), axis=0)
@@ -203,7 +314,6 @@ class Distortion(object):
         [integral, error] = quad(f_interp, 0, 2 * np.pi, points=thetas)
         ringAvg = 1 / (2 * np.pi) * integral
         return ringAvg
-
 
     def ARP1420PFAVEqualRingArea(self):
         spans = self.df['Span'].drop_duplicates()
@@ -217,7 +327,7 @@ class Distortion(object):
     def getRingData(self, span):
         data = self.df.loc[self.df['Span'] == span]
         thetas = data['Theta'].to_numpy()
-        pressures = data['Pressure'].to_numpy()
+        pressures = data['Total Pressure'].to_numpy()
         return thetas, pressures
 
     def pDeltaPavg1(self):
@@ -234,7 +344,7 @@ class Distortion(object):
         :return: Calculated Distortion Index
         :rtype: float
         """
-        pressures = self.df['Pressure'].to_numpy()
+        pressures = self.df['Total Pressure'].to_numpy()
         pMin = np.min(pressures)
         pMax = np.max(pressures)
         pAvg = np.average(pressures)
@@ -254,30 +364,12 @@ class Distortion(object):
         :return: Calculated Distortion Index
         :rtype: float
         """
-        pressures = self.df['Pressure'].to_numpy()
+        pressures = self.df['Total Pressure'].to_numpy()
         pMin = np.min(pressures)
         pAvg = np.average(pressures)
 
         index = (pAvg - pMin) / pAvg
         return index
-
-    def RRCriticalAngle(self):
-        """Returns the Rolls-Royce critical angle index WORK IN PROGRESS
-
-
-        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
-
-        :math:`DC(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`
-
-        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
-
-        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is '\\Theta' critical
-
-        :math:`q_{avg}` = The area-weighted average velocity head over the engine inlet
-
-        :return: Calculated Distortion Index
-        :rtype: float
-        """
 
     def NAPCKTheta(self):
         """Returns the Naval Air Propulsion Center KTheta index WORK IN PROGRESS
@@ -327,7 +419,7 @@ class Distortion(object):
         :rtype: float
         """
 
-    def get_areaWeightedAverage(self):
+    def get_areaWeights(self):
         spans = self.df['Span'].drop_duplicates().to_numpy()
         thetas = self.df['Theta'].drop_duplicates().to_numpy()
         thetaDifferences = np.diff(thetas) / 2  # Half the angle between each rake
@@ -344,7 +436,6 @@ class Distortion(object):
             sectorAngles = sectorAngles - 2 * np.pi
         # Assigning first annular sector angle since it wraps around array
         sectorAngles = np.concatenate(([sectorAngles], sectionDiff), axis=0)  # Adding rest of sector angles
-        # TODO There's almost certainly a better way of doing some of this angle math ^
 
         spanDifferences = np.diff(spans) / 2  # Half the distance between each probe radially
         circleRadii = np.concatenate(([self.hubRadius], spans[0:-1] + spanDifferences, [self.casingRadius]),
@@ -359,17 +450,13 @@ class Distortion(object):
         effectiveArea = sum(ringAreas)  # Sum of rings to find effective area (area between casing and hub)
         weights = []
         pressures = []
-        for i, pressure in enumerate(self.df['Pressure'].to_numpy()):
+        for i, pressure in enumerate(self.df['Total Pressure'].to_numpy()):
             ringNumber = (i + 1) % len(ringAreas) - 1
             angleNumber = (i) // len(ringAreas)
             weights = weights + [(ringAreas[ringNumber] * (sectorAngles[angleNumber] / (2 * np.pi))) / effectiveArea]
             pressures = pressures + [pressure]
-
-        # print(np.sum(weights))
-        weightedAverage = np.dot(weights, pressures)
-        # Dot product of area weights and sector pressures
-
-        return weightedAverage
+        weights = pd.DataFrame(weights, columns=['Area Weights'])
+        return weights
 
     def get_radialAverage(self):
         thetasRaw = self.df['Theta'].to_numpy()  # Raw list of thetas from sorted csv (has repeats)
@@ -378,7 +465,7 @@ class Distortion(object):
         probesOnRake = 1 + I[0][0]  # Number of probes on each rake
         thetas = thetasRaw[::probesOnRake]  # Creating new thetas array with no repeats
 
-        pressures = self.df['Pressure'].to_numpy()
+        pressures = self.df['Total Pressure'].to_numpy()
         radialAvg = pd.DataFrame(columns=['Theta', 'Average'])
         for i in range(len(thetas)):
             sum = 0
@@ -401,7 +488,7 @@ class Distortion(object):
 
         spans = self.df['Span'].to_numpy()
         spans = spans[0:probesOnRake]
-        pressures = self.df['Pressure'].to_numpy()
+        pressures = self.df['Total Pressure'].to_numpy()
         circumferentialAvg = pd.DataFrame(columns=['Span', 'Average'])
         for i in range(probesOnRake):
             sum = 0
