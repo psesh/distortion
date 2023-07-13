@@ -4,12 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
-# csvDF = pd.read_csv('data/Ground vortex aerodynamics Figure10f.csv')
+#csvDF = pd.read_csv('data/Ground vortex aerodynamics Figure10f.csv')
 csvDF = pd.read_csv('data/figure14.csv')
+#csvDF2 = pd.read_csv('data/figure15NonDimensional.csv')
 distortionObj = Distortion(csvDF)
-
+#distortionObj2 = Distortion(csvDF2)
 
 distortionObj.plot_quantity('Total Pressure')
+#distortionObj2.plot_quantity('Total Pressure')
 
 # print(csvDF.getDataframe())
 # print(distortionObj.getDF())
@@ -19,7 +21,7 @@ distortionObj.plot_quantity('Total Pressure')
 # print(distortionObj.get_areaWeightedAverage())
 # print(distortionObj.ARP1420PFAVEqualRingArea())
 # print(distortionObj.ARP1420().to_string())
-# print(distortionObj.RollsRoyceDC60())
+#print(distortionObj.RollsRoyceDC60())
 
 # x, y = distortionObj.getRingData(1)
 
@@ -27,8 +29,6 @@ distortionObj.plot_quantity('Total Pressure')
 # plt.plot(x,y)
 # plt.show()
 # Graphing
-
-
 
 
 # def ringsEqualArea(outerRadius, numberOfRings):

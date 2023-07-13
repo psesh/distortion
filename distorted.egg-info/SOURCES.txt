@@ -4,7 +4,6 @@ setup.py
 distorted/__init__.py
 distorted/distortion.py
 distorted/plot.py
-distorted/plotTest.py
 distorted.egg-info/PKG-INFO
 distorted.egg-info/SOURCES.txt
 distorted.egg-info/dependency_links.txt
