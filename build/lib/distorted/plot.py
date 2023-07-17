@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 import numpy as np
-from scipy.interpolate import Rbf
 
 
 def plot_quantity(distorted_instance, column_name):
@@ -43,6 +42,8 @@ def plot_quantity(distorted_instance, column_name):
     f = plt.figure(figsize=(9, 6))
     ax = f.add_subplot(111)
     pax = f.add_subplot(111, polar=True, facecolor='None')
+    pax.set_theta_direction(-1)
+    pax.set_theta_offset(np.pi / 2.0)
     pax.set_ylim([0, extent])
     ax.set_aspect(1)
     pax.set_aspect(1)

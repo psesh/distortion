@@ -185,6 +185,7 @@ class Distortion(object):
             avgTotalPressure = np.dot(allData['Total Pressure'].to_list(),areaWeights)
             avgVelHead = avgTotalPressure-avgStaticPressure
         index = (inletAreaAvgPressure-minSectorAvgPressure)/avgVelHead
+        #return max(sectorAreaWeightedMeanTotalPressures)
         return index
         # TODO: more testing of DC60
 
