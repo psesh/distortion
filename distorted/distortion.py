@@ -50,43 +50,70 @@ class Distortion(object):
     def getDF(self):
         return self.df
 
-    def RollsRoyceDC60(self):
-        """Returns the Rolls-Royce DC60 index WORK IN PROGRESS
+    def PrattAndWhitneyKD2(self):
+        # Need six or more total pressure rakes, five or more probes per rake
+        # Breaks if there's a probe at span = 0
+        OutsideDuctDiameter = 2
+        spans = self.df['Span'].drop_duplicates()
 
-        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
+        denom = 0
+        numer = 0
+        for s in spans:
+            PAV = self.ARP1420RingPAV(s)
+            thetas, pressures = self.getRingData(s)
+            thetas = np.concatenate((thetas, [thetas[0] + 2 * np.pi]), axis=0)
+            pressures = np.concatenate((pressures, [pressures[0]]), axis=0)
+            f_interp = lambda xx: np.interp(xx, thetas, pressures)
 
-        :math:`DC(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`
+            h = 1000  # TODO: can probably decrease this
+            values = np.linspace(0, 2 * np.pi, h)
+            transitions = []  # list of angular locations where pressure passes through PAV
+            aboveToBelowFirst = None
+            for j, value in enumerate(values):
+                if j < h - 1:
+                    if (f_interp(value) > PAV) & (f_interp(values[j + 1]) < PAV):
+                        transitions = transitions + [value]
+                        if len(transitions) == 1:
+                            aboveToBelowFirst = True
+                    if (f_interp(value) < PAV) & (f_interp(values[j + 1]) > PAV):
+                        transitions = transitions + [value]
+                        if len(transitions) == 1:
+                            aboveToBelowFirst = False
 
-        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
+            extentList = []
+            for k, value in enumerate(transitions):
+                if k < len(transitions) - 1:
+                    newVal1 = transitions[k + 1] - value
+                else:
+                    newVal1 = transitions[0] - value
+                while newVal1 < 0:
+                    newVal1 = newVal1 + 2 * np.pi
+                while newVal1 > 2 * np.pi:
+                    newVal1 = newVal1 - 2 * np.pi
+                extentList = extentList + [newVal1]
+            if aboveToBelowFirst:
+                lowPExtent = extentList[0::2]
+            else:
+                lowPExtent = extentList[1::2]
 
-        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is '\\Theta' critical
 
-        :math:`q_{avg}` = The area-weighted average velocity head over the engine inlet
 
-        :return: Calculated Distortion Index
-        :rtype: float
-        """
-        testSP = False
-        testV = False
-        try:
-            testDF = self.df['Static Pressure']
-            testSP = True
-        except:
-            pass
-        try:
-            testDF = self.df['Velocity']
-            testV = True
-        except:
-            pass
+            minPressure = np.min(pressures)
+            if len(lowPExtent) == 0:
+                maxLowPExtent = 0
+            else:
+                maxLowPExtent = np.max(lowPExtent)*(180/np.pi)
 
-        if testSP == False and testV == False:
-            print('Rolls Royce DC60 metric requires either Static Pressure or Velocity data')
-            return
+            numer += maxLowPExtent*(100*(PAV-minPressure)/PAV)*(OutsideDuctDiameter / (2 * s))
+            denom += OutsideDuctDiameter / (2 * s)
 
-        self.df = pd.concat([self.df, self.get_areaWeights()], axis=1)
+        return numer / denom
+
+    def RollsRoyceNumeratorHelper(self):
+        allData = self.df.copy(deep=True)
 
         critTheta = 60 * (np.pi / 180)
-        probeAngles = self.df['Theta'].drop_duplicates().to_list()
+        probeAngles = allData['Theta'].drop_duplicates().to_list()
         probeAngles = probeAngles + [2 * np.pi]
         sectorNumbers = list(range(0, len(probeAngles) - 1, 1))
         sectorDifferences = np.diff(probeAngles)
@@ -106,9 +133,9 @@ class Distortion(object):
             {'Sector Number': sectorNumbers, 'Probe Angle': probeAngles, 'Sector Width': sectorWidths,
              'Sector Start': sectorStarts, 'Sector End': sectorEnds})
 
-        allData = self.df.copy(deep=True)
+        allData = pd.concat([allData, self.get_areaWeights()], axis=1)
         allData['Fractional Weights'] = 0
-        iterations = 100 #TODO: Figure out how many iterations there should be
+        iterations = 100  # TODO: Figure out how many iterations there should be
         testAngles = np.linspace(0, 2 * np.pi - .00001, iterations)
         sectorAreaWeightedMeanTotalPressures = []
 
@@ -175,19 +202,73 @@ class Distortion(object):
             sectorAreaWeightedMeanTotalPressures = sectorAreaWeightedMeanTotalPressures + [areaAveragePressure]
         minSectorAvgPressure = min(sectorAreaWeightedMeanTotalPressures)
         inletAreaAvgPressure = np.dot(allData['Total Pressure'].to_list(), allData['Area Weights'].to_list())
+        return inletAreaAvgPressure - minSectorAvgPressure
 
+    def RollsRoyceDC60(self):
+        """Returns the Rolls-Royce DC60 index
+
+        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
+
+        :math:`DC(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`
+
+        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
+
+        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is '\\Theta' critical
+
+        :math:`q_{avg}` = The area-weighted average velocity head over the engine inlet
+
+        :return: Calculated Distortion Index
+        :rtype: float
+        """
+        testSP = False
+        testV = False
+        try:
+            testDF = self.df['Static Pressure']
+            testSP = True
+        except:
+            pass
+        try:
+            testDF = self.df['Velocity']
+            testV = True
+        except:
+            pass
+
+        if testSP == False and testV == False:
+            print('Rolls Royce DC60 metric requires either Static Pressure or Velocity data')
+            return
+
+        numerator = self.RollsRoyceNumeratorHelper()
+        allData = self.df.copy(deep=True)
+        areaWeights = self.get_areaWeights()['Area Weights'].to_list()
         if testV:
-            density = 1.22500 #kg/m^3 standard atmosphere sea level
+            density = 1.22500  # kg/m^3 standard atmosphere sea level
             avgVel = np.dot(allData['Velocity'].to_list(), areaWeights)
-            avgVelHead = .5*density*avgVel**2
+            avgVelHead = .5 * density * avgVel ** 2
         else:
-            avgStaticPressure = np.dot(allData['Static Pressure'].to_list(),areaWeights)
-            avgTotalPressure = np.dot(allData['Total Pressure'].to_list(),areaWeights)
-            avgVelHead = avgTotalPressure-avgStaticPressure
-        index = (inletAreaAvgPressure-minSectorAvgPressure)/avgVelHead
-        #return max(sectorAreaWeightedMeanTotalPressures)
+            avgStaticPressure = np.dot(allData['Static Pressure'].to_list(), areaWeights)
+            avgTotalPressure = np.dot(allData['Total Pressure'].to_list(), areaWeights)
+            avgVelHead = avgTotalPressure - avgStaticPressure
+        index = numerator / avgVelHead
+        # return max(sectorAreaWeightedMeanTotalPressures)
         return index
         # TODO: more testing of DC60
+
+    def RollsRoyceDeltaPDeltaPAvg(self):
+        """Returns the Rolls-Royce Pavg-Pmin(Theta Critical)/Pavg index
+
+        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
+
+        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
+
+        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is '\\Theta' critical
+
+        :return: Calculated Distortion Index
+        :rtype: float
+        """
+        numerator = self.RollsRoyceNumeratorHelper()
+        inletAreaAvgPressure = np.dot(self.df['Total Pressure'].to_list(),
+                                      self.get_areaWeights()['Area Weights'].to_list())
+        return numerator / inletAreaAvgPressure
 
     def ARP1420(self):
         """
@@ -210,7 +291,7 @@ class Distortion(object):
             pressures = np.concatenate((pressures, [pressures[0]]), axis=0)
             f_interp = lambda xx: np.interp(xx, thetas, pressures)
 
-            h = 1000
+            h = 1000 # TODO: can probably decrease this
             values = np.linspace(0, 2 * np.pi, h)
             transitions = []  # list of angular locations where pressure passes through PAV
             aboveToBelowFirst = None

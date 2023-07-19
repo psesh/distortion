@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
-csvDF = pd.read_csv('data/Ground vortex aerodynamics Figure10d.csv')
+csvDF = pd.read_csv('data/Ground vortex aerodynamics Figure10a.csv')
 #csvDF = pd.read_csv('data/figure14.csv')
 #csvDF2 = pd.read_csv('data/figure15NonDimensional.csv')
 #csvDF = pd.read_csv('data/test2.csv')
@@ -17,19 +17,11 @@ distortionObj.plot_quantity('Total Pressure')
 # print(csvDF.getDataframe())
 # print(distortionObj.getDF())
 
-# print(distortionObj.get_circumferentialAverage())
-# print(distortionObj.get_radialAverage())
-# print(distortionObj.get_areaWeightedAverage())
-# print(distortionObj.ARP1420PFAVEqualRingArea())
-# print(distortionObj.ARP1420().to_string())
-print(distortionObj.RollsRoyceDC60())
 
-# x, y = distortionObj.getRingData(1)
-
-
-# plt.plot(x,y)
-# plt.show()
-# Graphing
+#print(distortionObj.ARP1420().to_string())
+#print(distortionObj.RollsRoyceDC60())
+#print(distortionObj.RollsRoyceDeltaPDeltaPAvg())
+print(distortionObj.PrattAndWhitneyKD2())
 
 
 # def ringsEqualArea(outerRadius, numberOfRings):
@@ -39,4 +31,4 @@ print(distortionObj.RollsRoyceDC60())
 #     for i in range(numberOfRings-1):
 #         radiiList = radiiList + [radiusMiddleCircle * np.sqrt(i + 2)]
 #     return radiiList
-# print(ringsEqualArea(1, 9))
+# print(ringsEqualArea(1, 5))
