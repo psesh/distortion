@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 
-csvDF = pd.read_csv('data/Ground vortex aerodynamics Figure10a.csv')
+csvDF = pd.read_csv('data/.csv')
 #csvDF = pd.read_csv('data/figure14.csv')
 #csvDF2 = pd.read_csv('data/figure15NonDimensional.csv')
 #csvDF = pd.read_csv('data/test2.csv')

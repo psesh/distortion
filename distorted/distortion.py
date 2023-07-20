@@ -50,6 +50,16 @@ class Distortion(object):
     def getDF(self):
         return self.df
 
+
+    def SAE_PRS(self):
+        print()
+    def PrattAndWhitneyKa2(self):
+        print()
+    def PrattAndWhitneyKc2(self):
+        print()
+    def PWKThetaHelper(self):
+        print()
+
     def PrattAndWhitneyKD2(self):
         # Need six or more total pressure rakes, five or more probes per rake
         # Breaks if there's a probe at span = 0
