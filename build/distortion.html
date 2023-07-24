@@ -318,6 +318,64 @@ document.write(`
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="distorted.distortion.Distortion.PrattAndWhitneyKD2">
+<span class="sig-name descname"><span class="pre">PrattAndWhitneyKD2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.PrattAndWhitneyKD2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.PrattAndWhitneyKD2" title="Permalink to this definition">#</a></dt>
+<dd><p>Calculates Pratt and Whitney KD2.</p>
+<p><span class="math notranslate nohighlight">\(KD_{2} = \frac{\sum_{r=1}^{n}[\theta _{r}^{-}(\frac{\Delta P}{P})_{r}\frac{OD}{D_{r}}]}{\sum_{r=1}^{n}[\frac{OD}{D_{r}}]}\)</span></p>
+<p>where</p>
+<p><span class="math notranslate nohighlight">\(r\)</span> = particular ring of total pressure probes</p>
+<p><span class="math notranslate nohighlight">\(\theta _{r}^{-}\)</span> = circumferential extent in degrees of largest single pressure depression below <span class="math notranslate nohighlight">\(P_{avg}\)</span> for a given ring</p>
+<p><span class="math notranslate nohighlight">\((\frac{\Delta P}{P})_{r}\)</span> = <span class="math notranslate nohighlight">\((P_{avg} - P_{min})/P_{avg}\)</span> in percent, for a particular ring</p>
+<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = average pressure per ring</p>
+<p><span class="math notranslate nohighlight">\(P_{min}\)</span> = minimum pressure per ring</p>
+<p><span class="math notranslate nohighlight">\(OD\)</span> = outer diamter of duct</p>
+<p><span class="math notranslate nohighlight">\(D_{r}\)</span> diameter of particular ring</p>
+<p><span class="math notranslate nohighlight">\(n\)</span> = number of measurement rings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distorted.distortion.Distortion.RollsRoyceDC60">
+<span class="sig-name descname"><span class="pre">RollsRoyceDC60</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.RollsRoyceDC60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.RollsRoyceDC60" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the Rolls-Royce DC60 index</p>
+<p><span class="math notranslate nohighlight">\(DC(\Theta \;critical)/\bar{P} = \frac{P_{avg}-P_{min},\Theta^{-}_{c},avg}{q_{avg}}\)</span></p>
+<p>where</p>
+<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = The area-weighted mean total pressure over the engine inlet</p>
+<p><span class="math notranslate nohighlight">\(P_{min},\Theta^{-}_{c},avg\)</span> = The minimum area-weighted mean total pressure for a sector whose circumferential extent is ‘Theta’ critical</p>
+<p><span class="math notranslate nohighlight">\(q_{avg}\)</span> = The area-weighted average velocity head over the engine inlet</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calculated Distortion Index</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distorted.distortion.Distortion.RollsRoyceDeltaPDeltaPAvg">
+<span class="sig-name descname"><span class="pre">RollsRoyceDeltaPDeltaPAvg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.RollsRoyceDeltaPDeltaPAvg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.RollsRoyceDeltaPDeltaPAvg" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the Rolls-Royce Pavg-Pmin(Theta Critical)/Pavg index</p>
+<p><span class="math notranslate nohighlight">\(\Delta P(\Theta critical)/\bar{P} = \frac{P_{avg}-P_{min},\Theta^{-}_{c},avg}{P_{avg}}\)</span></p>
+<p>where</p>
+<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = The area-weighted mean total pressure over the engine inlet</p>
+<p><span class="math notranslate nohighlight">\(P_{min},\Theta^{-}_{c},avg\)</span> = The minimum area-weighted mean total pressure for a sector whose circumferential extent is ‘Theta’ critical</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calculated Distortion Index</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="distorted.distortion.Distortion.ARP1420">
 <span class="sig-name descname"><span class="pre">ARP1420</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.ARP1420"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.ARP1420" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculates ARP1420.</p>
@@ -329,10 +387,69 @@ document.write(`
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="distorted.distortion.Distortion.pDeltaPavg1">
+<span class="sig-name descname"><span class="pre">pDeltaPavg1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.pDeltaPavg1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.pDeltaPavg1" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a simple distortion index</p>
+<p><span class="math notranslate nohighlight">\(\frac{\Delta P_{max-min}}{\bar{P}}=\frac{P_{max}-P_{min}}{P_{avg}}\)</span></p>
+<p>where</p>
+<p><span class="math notranslate nohighlight">\(P_{max}\)</span> = Maximum inlet total pressure</p>
+<p><span class="math notranslate nohighlight">\(P_{min}\)</span> = Minimum inlet total pressure</p>
+<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = Average inlet total pressure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calculated Distortion Index</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distorted.distortion.Distortion.pDeltaPavg2">
+<span class="sig-name descname"><span class="pre">pDeltaPavg2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.pDeltaPavg2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.pDeltaPavg2" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a simple distortion index</p>
+<p><span class="math notranslate nohighlight">\(\frac{\Delta P_{avg-min}}{\bar{P}}=\frac{P_{avg}-P_{min}}{P_{avg}}\)</span></p>
+<p>where</p>
+<p><span class="math notranslate nohighlight">\(P_{min}\)</span> = Minimum inlet total pressure</p>
+<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = Average inlet total pressure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calculated Distortion Index</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distorted.distortion.Distortion.NAPCKTheta">
+<span class="sig-name descname"><span class="pre">NAPCKTheta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.NAPCKTheta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.NAPCKTheta" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the Naval Air Propulsion Center KTheta index WORK IN PROGRESS</p>
+<p><span class="math notranslate nohighlight">\(K\Theta = \frac{\frac{\Theta^{-}}{2\pi}\left [\sqrt{q/P}\right]_{ref}}{\sqrt{\frac{q}{P}/\frac{\bar{q}}{\bar{P}}}}\)</span></p>
+<p>where</p>
+<p><span class="math notranslate nohighlight">\(\Theta^{-}\)</span> = Circumferential extent of the total pressure region less than the plane average total pressure</p>
+<p><span class="math notranslate nohighlight">\(P\)</span> = Average inlet total pressure within the low pressure region</p>
+<p><span class="math notranslate nohighlight">\(\bar{P}\)</span> = Average inlet total pressure</p>
+<p><span class="math notranslate nohighlight">\(q\)</span> = Average dynamic pressure in low pressure region</p>
+<p><span class="math notranslate nohighlight">\(\bar{q}\)</span> = Average inlet dynamic pressure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Calculated Distortion Index</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="distorted.distortion.Distortion.AVCOLycomingDI">
 <span class="sig-name descname"><span class="pre">AVCOLycomingDI</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.AVCOLycomingDI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.AVCOLycomingDI" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns the AVCO Lycoming DI index WORK IN PROGRESS</p>
 <p><span class="math notranslate nohighlight">\(DI = (\frac{P_{avg}-P_{low\:avg}}{P_{avg}})\sqrt{\overline{M*E*R}}\)</span></p>
+<p>where</p>
 <p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = Area-weighted average total pressure</p>
 <p><span class="math notranslate nohighlight">\(P_{low\:avg}\)</span> = Area-weighted total pressure in regions where P is less than <span class="math notranslate nohighlight">\(P_{avg}\)</span></p>
 <p><span class="math notranslate nohighlight">\(M\)</span> = Magnitude or shape factor = <span class="math notranslate nohighlight">\(6.0(P_{avg}-P_{low\:avg})/(P_{avg}-P_{low\:min})\)</span></p>
@@ -354,83 +471,9 @@ document.write(`
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="distorted.distortion.Distortion.NAPCKTheta">
-<span class="sig-name descname"><span class="pre">NAPCKTheta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.NAPCKTheta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.NAPCKTheta" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the Naval Air Propulsion Center KTheta index WORK IN PROGRESS</p>
-<p><span class="math notranslate nohighlight">\(K\Theta = \frac{\frac{\Theta^{-}}{2\pi}[\sqrt{q/P}]_{ref}}{\sqrt{\frac{q}{P}/\frac{\bar{q}}{\bar{P}}}}\)</span></p>
-<p><span class="math notranslate nohighlight">\(\Theta^{-}\)</span> = Circumferential extent of the total pressure region less than the plane average total pressure</p>
-<p><span class="math notranslate nohighlight">\(P\)</span> = Average inlet total pressure within the low pressure region</p>
-<p><span class="math notranslate nohighlight">\(\bar{P}\)</span> = Average inlet total pressure</p>
-<p><span class="math notranslate nohighlight">\(q\)</span> = Average dynamic pressure in low pressure region</p>
-<p><span class="math notranslate nohighlight">\(\bar{q}\)</span> = Average inlet dynamic pressure</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Calculated Distortion Index</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="distorted.distortion.Distortion.RollsRoyceDC60">
-<span class="sig-name descname"><span class="pre">RollsRoyceDC60</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.RollsRoyceDC60"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.RollsRoyceDC60" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns the Rolls-Royce DC60 index WORK IN PROGRESS</p>
-<p><span class="math notranslate nohighlight">\(\Delta P(\Theta critical)/\bar{P} = \frac{P_{avg}-P_{min},\Theta^{-}_{c},avg}{P_{avg}}\)</span></p>
-<p><span class="math notranslate nohighlight">\(DC(\Theta critical)/\bar{P} = \frac{P_{avg}-P_{min},\Theta^{-}_{c},avg}{q_{avg}}\)</span></p>
-<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = The area-weighted mean total pressure over the engine inlet</p>
-<p><span class="math notranslate nohighlight">\(P_{min},\Theta^{-}_{c},avg\)</span> = The minimum area-weighted mean total pressure for a sector whose circumferential extent is ‘Theta’ critical</p>
-<p><span class="math notranslate nohighlight">\(q_{avg}\)</span> = The area-weighted average velocity head over the engine inlet</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Calculated Distortion Index</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="distorted.distortion.Distortion.pDeltaPavg1">
-<span class="sig-name descname"><span class="pre">pDeltaPavg1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.pDeltaPavg1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.pDeltaPavg1" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a simple distortion index</p>
-<p><span class="math notranslate nohighlight">\(\frac{\Delta P_{max-min}}{\bar{P}}=\frac{P_{max}-P_{min}}{P_{avg}}\)</span></p>
-<p><span class="math notranslate nohighlight">\(P_{max}\)</span> = Maximum inlet total pressure</p>
-<p><span class="math notranslate nohighlight">\(P_{min}\)</span> = Minimum inlet total pressure</p>
-<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = Average inlet total pressure</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Calculated Distortion Index</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="distorted.distortion.Distortion.pDeltaPavg2">
-<span class="sig-name descname"><span class="pre">pDeltaPavg2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.pDeltaPavg2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.pDeltaPavg2" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a simple distortion index</p>
-<p><span class="math notranslate nohighlight">\(\frac{\Delta P_{avg-min}}{\bar{P}}=\frac{P_{avg}-P_{min}}{P_{avg}}\)</span></p>
-<p><span class="math notranslate nohighlight">\(P_{min}\)</span> = Minimum inlet total pressure</p>
-<p><span class="math notranslate nohighlight">\(P_{avg}\)</span> = Average inlet total pressure</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Calculated Distortion Index</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="distorted.distortion.Distortion.plot_quantity">
 <span class="sig-name descname"><span class="pre">plot_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/distorted/distortion.html#Distortion.plot_quantity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#distorted.distortion.Distortion.plot_quantity" title="Permalink to this definition">#</a></dt>
-<dd><p>Plots the first few orthogonal polynomials. See <code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_orthogonal_polynomials()</span></code> for full description.</p>
+<dd><p>Plots input column name from dataset</p>
 </dd></dl>
 
 </dd></dl>
@@ -455,12 +498,14 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion"><code class="docutils literal notranslate"><span class="pre">Distortion</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.ARP1420"><code class="docutils literal notranslate"><span class="pre">Distortion.ARP1420()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.AVCOLycomingDI"><code class="docutils literal notranslate"><span class="pre">Distortion.AVCOLycomingDI()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.NAPCKTheta"><code class="docutils literal notranslate"><span class="pre">Distortion.NAPCKTheta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.PrattAndWhitneyKD2"><code class="docutils literal notranslate"><span class="pre">Distortion.PrattAndWhitneyKD2()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.RollsRoyceDC60"><code class="docutils literal notranslate"><span class="pre">Distortion.RollsRoyceDC60()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.RollsRoyceDeltaPDeltaPAvg"><code class="docutils literal notranslate"><span class="pre">Distortion.RollsRoyceDeltaPDeltaPAvg()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.ARP1420"><code class="docutils literal notranslate"><span class="pre">Distortion.ARP1420()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.pDeltaPavg1"><code class="docutils literal notranslate"><span class="pre">Distortion.pDeltaPavg1()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.pDeltaPavg2"><code class="docutils literal notranslate"><span class="pre">Distortion.pDeltaPavg2()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.NAPCKTheta"><code class="docutils literal notranslate"><span class="pre">Distortion.NAPCKTheta()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.AVCOLycomingDI"><code class="docutils literal notranslate"><span class="pre">Distortion.AVCOLycomingDI()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distorted.distortion.Distortion.plot_quantity"><code class="docutils literal notranslate"><span class="pre">Distortion.plot_quantity()</span></code></a></li>
 </ul>
 </li>

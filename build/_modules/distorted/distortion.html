@@ -352,43 +352,108 @@ document.write(`
     <span class="k">def</span> <span class="nf">getDF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
 
-<div class="viewcode-block" id="Distortion.RollsRoyceDC60"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.RollsRoyceDC60">[docs]</a>    <span class="k">def</span> <span class="nf">RollsRoyceDC60</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Rolls-Royce DC60 index WORK IN PROGRESS</span>
 
-<span class="sd">        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`</span>
+    <span class="k">def</span> <span class="nf">SAE_PRS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">PrattAndWhitneyKa2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">PrattAndWhitneyKc2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">PWKThetaHelper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">()</span>
 
-<span class="sd">        :math:`DC(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`</span>
+<div class="viewcode-block" id="Distortion.PrattAndWhitneyKD2"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.PrattAndWhitneyKD2">[docs]</a>    <span class="k">def</span> <span class="nf">PrattAndWhitneyKD2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates Pratt and Whitney KD2.</span>
 
-<span class="sd">        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet</span>
+<span class="sd">        :math:`KD_{2} = \\frac{\\sum_{r=1}^{n}[\\theta _{r}^{-}(\\frac{\\Delta P}{P})_{r}\\frac{OD}{D_{r}}]}{\\sum_{r=1}^{n}[\\frac{OD}{D_{r}}]}`</span>
 
-<span class="sd">        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is &#39;\\Theta&#39; critical</span>
+<span class="sd">        where</span>
 
-<span class="sd">        :math:`q_{avg}` = The area-weighted average velocity head over the engine inlet</span>
+<span class="sd">        :math:`r` = particular ring of total pressure probes</span>
 
-<span class="sd">        :return: Calculated Distortion Index</span>
-<span class="sd">        :rtype: float</span>
+<span class="sd">        :math:`\\theta _{r}^{-}` = circumferential extent in degrees of largest single pressure depression below :math:`P_{avg}` for a given ring</span>
+
+<span class="sd">        :math:`(\\frac{\\Delta P}{P})_{r}` = :math:`(P_{avg} - P_{min})/P_{avg}` in percent, for a particular ring</span>
+
+<span class="sd">        :math:`P_{avg}` = average pressure per ring</span>
+
+<span class="sd">        :math:`P_{min}` = minimum pressure per ring</span>
+
+<span class="sd">        :math:`OD` = outer diamter of duct</span>
+
+<span class="sd">        :math:`D_{r}` diameter of particular ring</span>
+
+<span class="sd">        :math:`n` = number of measurement rings</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">testSP</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">testV</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">testDF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Static Pressure&#39;</span><span class="p">]</span>
-            <span class="n">testSP</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">testDF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Velocity&#39;</span><span class="p">]</span>
-            <span class="n">testV</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">pass</span>
+        <span class="c1"># Need six or more total pressure rakes, five or more probes per rake</span>
+        <span class="c1"># Breaks if there&#39;s a probe at span = 0</span>
+        <span class="n">OutsideDuctDiameter</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Span&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">testSP</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">testV</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rolls Royce DC60 metric requires either Static Pressure or Velocity data&#39;</span><span class="p">)</span>
-            <span class="k">return</span>
+        <span class="n">denominatorSum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">numeratorSum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">:</span>
+            <span class="n">PAV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ARP1420RingPAV</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRingData</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pressures</span><span class="p">,</span> <span class="p">[</span><span class="n">pressures</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">f_interp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_areaWeights</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># TODO: can probably decrease this</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of angular locations where pressure passes through PAV</span>
+            <span class="n">aboveToBelowFirst</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">h</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">f_interp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">PAV</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f_interp</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">PAV</span><span class="p">):</span>
+                        <span class="n">transitions</span> <span class="o">=</span> <span class="n">transitions</span> <span class="o">+</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">aboveToBelowFirst</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">f_interp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">PAV</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">f_interp</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">PAV</span><span class="p">):</span>
+                        <span class="n">transitions</span> <span class="o">=</span> <span class="n">transitions</span> <span class="o">+</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">aboveToBelowFirst</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">extentList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transitions</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">transitions</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">newVal1</span> <span class="o">=</span> <span class="n">transitions</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newVal1</span> <span class="o">=</span> <span class="n">transitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span>
+                <span class="k">while</span> <span class="n">newVal1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">newVal1</span> <span class="o">=</span> <span class="n">newVal1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+                <span class="k">while</span> <span class="n">newVal1</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+                    <span class="n">newVal1</span> <span class="o">=</span> <span class="n">newVal1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+                <span class="n">extentList</span> <span class="o">=</span> <span class="n">extentList</span> <span class="o">+</span> <span class="p">[</span><span class="n">newVal1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">aboveToBelowFirst</span><span class="p">:</span>
+                <span class="n">lowPExtent</span> <span class="o">=</span> <span class="n">extentList</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lowPExtent</span> <span class="o">=</span> <span class="n">extentList</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+
+
+
+            <span class="n">minPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">pressures</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lowPExtent</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">maxLowPExtent</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">maxLowPExtent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lowPExtent</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+            <span class="n">numeratorSum</span> <span class="o">+=</span> <span class="n">maxLowPExtent</span><span class="o">*</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">PAV</span><span class="o">-</span><span class="n">minPressure</span><span class="p">)</span><span class="o">/</span><span class="n">PAV</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">OutsideDuctDiameter</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">s</span><span class="p">))</span>
+            <span class="n">denominatorSum</span> <span class="o">+=</span> <span class="n">OutsideDuctDiameter</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">numeratorSum</span> <span class="o">/</span> <span class="n">denominatorSum</span></div>
+
+    <span class="k">def</span> <span class="nf">RollsRoyceNumeratorHelper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">allData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">critTheta</span> <span class="o">=</span> <span class="mi">60</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span>
-        <span class="n">probeAngles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="n">probeAngles</span> <span class="o">=</span> <span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
         <span class="n">probeAngles</span> <span class="o">=</span> <span class="n">probeAngles</span> <span class="o">+</span> <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]</span>
         <span class="n">sectorNumbers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">probeAngles</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="n">sectorDifferences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">probeAngles</span><span class="p">)</span>
@@ -408,9 +473,9 @@ document.write(`
             <span class="p">{</span><span class="s1">&#39;Sector Number&#39;</span><span class="p">:</span> <span class="n">sectorNumbers</span><span class="p">,</span> <span class="s1">&#39;Probe Angle&#39;</span><span class="p">:</span> <span class="n">probeAngles</span><span class="p">,</span> <span class="s1">&#39;Sector Width&#39;</span><span class="p">:</span> <span class="n">sectorWidths</span><span class="p">,</span>
              <span class="s1">&#39;Sector Start&#39;</span><span class="p">:</span> <span class="n">sectorStarts</span><span class="p">,</span> <span class="s1">&#39;Sector End&#39;</span><span class="p">:</span> <span class="n">sectorEnds</span><span class="p">})</span>
 
-        <span class="n">allData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">allData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">allData</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_areaWeights</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Fractional Weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">iterations</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">#TODO: Figure out how many iterations there should be</span>
+        <span class="n">iterations</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># TODO: Figure out how many iterations there should be</span>
         <span class="n">testAngles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="mf">.00001</span><span class="p">,</span> <span class="n">iterations</span><span class="p">)</span>
         <span class="n">sectorAreaWeightedMeanTotalPressures</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -477,19 +542,76 @@ document.write(`
             <span class="n">sectorAreaWeightedMeanTotalPressures</span> <span class="o">=</span> <span class="n">sectorAreaWeightedMeanTotalPressures</span> <span class="o">+</span> <span class="p">[</span><span class="n">areaAveragePressure</span><span class="p">]</span>
         <span class="n">minSectorAvgPressure</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">sectorAreaWeightedMeanTotalPressures</span><span class="p">)</span>
         <span class="n">inletAreaAvgPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Total Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Area Weights&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">inletAreaAvgPressure</span> <span class="o">-</span> <span class="n">minSectorAvgPressure</span>
 
+<div class="viewcode-block" id="Distortion.RollsRoyceDC60"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.RollsRoyceDC60">[docs]</a>    <span class="k">def</span> <span class="nf">RollsRoyceDC60</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Rolls-Royce DC60 index</span>
+
+<span class="sd">        :math:`DC(\\Theta \\;critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`</span>
+
+<span class="sd">        where</span>
+
+<span class="sd">        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet</span>
+
+<span class="sd">        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is &#39;\\Theta&#39; critical</span>
+
+<span class="sd">        :math:`q_{avg}` = The area-weighted average velocity head over the engine inlet</span>
+
+<span class="sd">        :return: Calculated Distortion Index</span>
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">testSP</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">testV</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">testDF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Static Pressure&#39;</span><span class="p">]</span>
+            <span class="n">testSP</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">testDF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Velocity&#39;</span><span class="p">]</span>
+            <span class="n">testV</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">testSP</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">testV</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rolls Royce DC60 metric requires either Static Pressure or Velocity data&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">numerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RollsRoyceNumeratorHelper</span><span class="p">()</span>
+        <span class="n">allData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">areaWeights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_areaWeights</span><span class="p">()[</span><span class="s1">&#39;Area Weights&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">testV</span><span class="p">:</span>
-            <span class="n">density</span> <span class="o">=</span> <span class="mf">1.22500</span> <span class="c1">#kg/m^3 standard atmosphere sea level</span>
+            <span class="n">density</span> <span class="o">=</span> <span class="mf">1.22500</span>  <span class="c1"># kg/m^3 standard atmosphere sea level</span>
             <span class="n">avgVel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">areaWeights</span><span class="p">)</span>
-            <span class="n">avgVelHead</span> <span class="o">=</span> <span class="mf">.5</span><span class="o">*</span><span class="n">density</span><span class="o">*</span><span class="n">avgVel</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">avgVelHead</span> <span class="o">=</span> <span class="mf">.5</span> <span class="o">*</span> <span class="n">density</span> <span class="o">*</span> <span class="n">avgVel</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">avgStaticPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Static Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span><span class="n">areaWeights</span><span class="p">)</span>
-            <span class="n">avgTotalPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Total Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span><span class="n">areaWeights</span><span class="p">)</span>
-            <span class="n">avgVelHead</span> <span class="o">=</span> <span class="n">avgTotalPressure</span><span class="o">-</span><span class="n">avgStaticPressure</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">inletAreaAvgPressure</span><span class="o">-</span><span class="n">minSectorAvgPressure</span><span class="p">)</span><span class="o">/</span><span class="n">avgVelHead</span>
-        <span class="c1">#return max(sectorAreaWeightedMeanTotalPressures)</span>
+            <span class="n">avgStaticPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Static Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">areaWeights</span><span class="p">)</span>
+            <span class="n">avgTotalPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">allData</span><span class="p">[</span><span class="s1">&#39;Total Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">areaWeights</span><span class="p">)</span>
+            <span class="n">avgVelHead</span> <span class="o">=</span> <span class="n">avgTotalPressure</span> <span class="o">-</span> <span class="n">avgStaticPressure</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">avgVelHead</span>
+        <span class="c1"># return max(sectorAreaWeightedMeanTotalPressures)</span>
         <span class="k">return</span> <span class="n">index</span></div>
         <span class="c1"># TODO: more testing of DC60</span>
+
+<div class="viewcode-block" id="Distortion.RollsRoyceDeltaPDeltaPAvg"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.RollsRoyceDeltaPDeltaPAvg">[docs]</a>    <span class="k">def</span> <span class="nf">RollsRoyceDeltaPDeltaPAvg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Rolls-Royce Pavg-Pmin(Theta Critical)/Pavg index</span>
+
+<span class="sd">        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`</span>
+
+<span class="sd">        where</span>
+
+<span class="sd">        :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet</span>
+
+<span class="sd">        :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is &#39;\\Theta&#39; critical</span>
+
+<span class="sd">        :return: Calculated Distortion Index</span>
+
+<span class="sd">        :rtype: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RollsRoyceNumeratorHelper</span><span class="p">()</span>
+        <span class="n">inletAreaAvgPressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Total Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">get_areaWeights</span><span class="p">()[</span><span class="s1">&#39;Area Weights&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">inletAreaAvgPressure</span></div>
 
 <div class="viewcode-block" id="Distortion.ARP1420"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.ARP1420">[docs]</a>    <span class="k">def</span> <span class="nf">ARP1420</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -512,7 +634,7 @@ document.write(`
             <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pressures</span><span class="p">,</span> <span class="p">[</span><span class="n">pressures</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">f_interp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span><span class="p">)</span>
 
-            <span class="n">h</span> <span class="o">=</span> <span class="mi">1000</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># TODO: can probably decrease this</span>
             <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
             <span class="n">transitions</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list of angular locations where pressure passes through PAV</span>
             <span class="n">aboveToBelowFirst</span> <span class="o">=</span> <span class="kc">None</span>
@@ -650,38 +772,12 @@ document.write(`
                           <span class="s1">&#39;Multiple Per Rev&#39;</span><span class="p">,</span> <span class="s1">&#39;Radial Intensity&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
-<div class="viewcode-block" id="Distortion.plot_quantity"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.plot_quantity">[docs]</a>    <span class="k">def</span> <span class="nf">plot_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Plots the first few orthogonal polynomials. See :meth:`~equadratures.plot.plot_orthogonal_polynomials` for full description. &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">plot_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="nf">ARP1420RingPAV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
-        <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRingData</span><span class="p">(</span><span class="n">span</span><span class="p">)</span>
-        <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pressures</span><span class="p">,</span> <span class="p">[</span><span class="n">pressures</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">f_interp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span><span class="p">)</span>
-        <span class="p">[</span><span class="n">integral</span><span class="p">,</span> <span class="n">error</span><span class="p">]</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">f_interp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">thetas</span><span class="p">)</span>
-        <span class="n">ringAvg</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">integral</span>
-        <span class="k">return</span> <span class="n">ringAvg</span>
-
-    <span class="k">def</span> <span class="nf">ARP1420PFAVEqualRingArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Span&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">spans</span><span class="o">.</span><span class="n">size</span>
-        <span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">:</span>
-            <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ARP1420RingPAV</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="n">PFAV</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="nb">sum</span>
-        <span class="k">return</span> <span class="n">PFAV</span>
-
-    <span class="k">def</span> <span class="nf">getRingData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Span&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">span</span><span class="p">]</span>
-        <span class="n">thetas</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-        <span class="n">pressures</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Total Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span>
-
 <div class="viewcode-block" id="Distortion.pDeltaPavg1"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.pDeltaPavg1">[docs]</a>    <span class="k">def</span> <span class="nf">pDeltaPavg1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a simple distortion index</span>
 
 <span class="sd">        :math:`\\frac{\\Delta P_{max-min}}{\\bar{P}}=\\frac{P_{max}-P_{min}}{P_{avg}}`</span>
+
+<span class="sd">        where</span>
 
 <span class="sd">        :math:`P_{max}` = Maximum inlet total pressure</span>
 
@@ -704,10 +800,11 @@ document.write(`
 
 <span class="sd">        :math:`\\frac{\\Delta P_{avg-min}}{\\bar{P}}=\\frac{P_{avg}-P_{min}}{P_{avg}}`</span>
 
+<span class="sd">        where</span>
+
 <span class="sd">        :math:`P_{min}` = Minimum inlet total pressure</span>
 
 <span class="sd">        :math:`P_{avg}` = Average inlet total pressure</span>
-
 
 <span class="sd">        :return: Calculated Distortion Index</span>
 <span class="sd">        :rtype: float</span>
@@ -722,7 +819,9 @@ document.write(`
 <div class="viewcode-block" id="Distortion.NAPCKTheta"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.NAPCKTheta">[docs]</a>    <span class="k">def</span> <span class="nf">NAPCKTheta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the Naval Air Propulsion Center KTheta index WORK IN PROGRESS</span>
 
-<span class="sd">        :math:`K\\Theta = \\frac{\\frac{\\Theta^{-}}{2\\pi}[\\sqrt{q/P}]_{ref}}{\\sqrt{\\frac{q}{P}/\\frac{\\bar{q}}{\\bar{P}}}}`</span>
+<span class="sd">        :math:`K\\Theta = \\frac{\\frac{\\Theta^{-}}{2\\pi}\\left [\\sqrt{q/P}\\right]_{ref}}{\\sqrt{\\frac{q}{P}/\\frac{\\bar{q}}{\\bar{P}}}}`</span>
+
+<span class="sd">        where</span>
 
 <span class="sd">        :math:`\\Theta^{-}` = Circumferential extent of the total pressure region less than the plane average total pressure</span>
 
@@ -742,6 +841,8 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the AVCO Lycoming DI index WORK IN PROGRESS</span>
 
 <span class="sd">        :math:`DI = (\\frac{P_{avg}-P_{low\\:avg}}{P_{avg}})\\sqrt{\\overline{M*E*R}}`</span>
+
+<span class="sd">        where</span>
 
 <span class="sd">        :math:`P_{avg}` = Area-weighted average total pressure</span>
 
@@ -766,6 +867,12 @@ document.write(`
 <span class="sd">        :return: Calculated Distortion Index</span>
 <span class="sd">        :rtype: float</span>
 <span class="sd">        &quot;&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="Distortion.plot_quantity"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.plot_quantity">[docs]</a>    <span class="k">def</span> <span class="nf">plot_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots input column name from dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">plot_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">get_areaWeights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Span&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
@@ -848,7 +955,28 @@ document.write(`
                  <span class="s1">&#39;Average&#39;</span><span class="p">:</span> <span class="p">[</span><span class="nb">sum</span> <span class="o">/</span> <span class="n">probesOnRake</span><span class="p">]</span>
                  <span class="p">})</span>
             <span class="n">circumferentialAvg</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">circumferentialAvg</span><span class="p">,</span> <span class="n">newRow</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">circumferentialAvg</span></div>
+        <span class="k">return</span> <span class="n">circumferentialAvg</span>
+    <span class="k">def</span> <span class="nf">getRingData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Span&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">span</span><span class="p">]</span>
+        <span class="n">thetas</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Theta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">pressures</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Total Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span>
+    <span class="k">def</span> <span class="nf">ARP1420RingPAV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
+        <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRingData</span><span class="p">(</span><span class="n">span</span><span class="p">)</span>
+        <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pressures</span><span class="p">,</span> <span class="p">[</span><span class="n">pressures</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">f_interp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xx</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span><span class="p">)</span>
+        <span class="p">[</span><span class="n">integral</span><span class="p">,</span> <span class="n">error</span><span class="p">]</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">f_interp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">thetas</span><span class="p">)</span>
+        <span class="n">ringAvg</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">integral</span>
+        <span class="k">return</span> <span class="n">ringAvg</span>
+    <span class="k">def</span> <span class="nf">ARP1420PFAVEqualRingArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">spans</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Span&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">spans</span><span class="o">.</span><span class="n">size</span>
+        <span class="nb">sum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">:</span>
+            <span class="nb">sum</span> <span class="o">=</span> <span class="nb">sum</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ARP1420RingPAV</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">PFAV</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="nb">sum</span>
+        <span class="k">return</span> <span class="n">PFAV</span></div>
 </pre></div>
 
                 </article>

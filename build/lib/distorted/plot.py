@@ -9,10 +9,16 @@ def plot_quantity(distorted_instance, column_name):
     """
     Radii = distorted_instance.df['Span']
     Angles = distorted_instance.df['Theta']
-    Values = distorted_instance.df[column_name]
+    Values = distorted_instance.df[column_name].to_list()
 
-    x = np.array(Radii) * np.sin(Angles)
-    y = np.array(Radii) * np.cos(Angles)
+    x = (np.array(Radii) * np.sin(Angles)).to_list()
+    y = (np.array(Radii) * np.cos(Angles)).to_list()
+
+    minSpan = np.min(Radii)
+    centerValue = np.average(distorted_instance.df[distorted_instance.df['Span']==minSpan][column_name])
+    Values = [centerValue] + Values
+    x = [0] + x
+    y = [0] + y
 
     extent = np.max([np.abs(np.min(x)), np.abs(np.max(x)), np.abs(np.min(y)), np.abs(np.max(y))])
 
@@ -49,6 +55,7 @@ def plot_quantity(distorted_instance, column_name):
     pax.set_aspect(1)
     ax.axis('Off')
     cf = ax.contourf(xi, yi, Vi, 60, cmap=plt.cm.jet)
+    # cf = ax.contourf(xi,yi,Vi,levels=np.linspace(0,2,60), cmap=plt.cm.jet)
     ax.scatter(x, y, color='black', s=2)
     cbar_ax = f.add_axes([0.85, .1, 0.05, .8])
     plt.colorbar(cf, cax=cbar_ax)

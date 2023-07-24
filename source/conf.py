@@ -70,3 +70,5 @@ html_theme_options = {
     "show_prev_next": False,
     "search_bar_text": "Search documentation",
 }
+
+autodoc_member_order = 'bysource'

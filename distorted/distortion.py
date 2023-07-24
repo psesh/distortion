@@ -61,13 +61,41 @@ class Distortion(object):
         print()
 
     def PrattAndWhitneyKD2(self):
+        """
+        Calculates Pratt and Whitney KD2.
+
+        :math:`KD_{2} = \\frac{\\sum_{r=1}^{n}[\\theta _{r}^{-}(\\frac{\\Delta P}{P})_{r}\\frac{OD}{D_{r}}]}{\\sum_{r=1}^{n}[\\frac{OD}{D_{r}}]}`
+
+        where
+
+        :math:`r` = particular ring of total pressure probes
+
+        :math:`\\theta _{r}^{-}` = circumferential extent in degrees of largest single pressure depression below :math:`P_{avg}` for a given ring
+
+        :math:`(\\frac{\\Delta P}{P})_{r}` = :math:`(P_{avg} - P_{min})/P_{avg}` in percent, for a particular ring
+
+        :math:`P_{avg}` = average pressure per ring
+
+        :math:`P_{min}` = minimum pressure per ring
+
+        :math:`OD` = outer diamter of duct
+
+        :math:`D_{r}` diameter of particular ring
+
+        :math:`n` = number of measurement rings
+
+        Returns
+        -------
+        float
+
+        """
         # Need six or more total pressure rakes, five or more probes per rake
         # Breaks if there's a probe at span = 0
         OutsideDuctDiameter = 2
         spans = self.df['Span'].drop_duplicates()
 
-        denom = 0
-        numer = 0
+        denominatorSum = 0
+        numeratorSum = 0
         for s in spans:
             PAV = self.ARP1420RingPAV(s)
             thetas, pressures = self.getRingData(s)
@@ -114,10 +142,10 @@ class Distortion(object):
             else:
                 maxLowPExtent = np.max(lowPExtent)*(180/np.pi)
 
-            numer += maxLowPExtent*(100*(PAV-minPressure)/PAV)*(OutsideDuctDiameter / (2 * s))
-            denom += OutsideDuctDiameter / (2 * s)
+            numeratorSum += maxLowPExtent*(100*(PAV-minPressure)/PAV)*(OutsideDuctDiameter / (2 * s))
+            denominatorSum += OutsideDuctDiameter / (2 * s)
 
-        return numer / denom
+        return numeratorSum / denominatorSum
 
     def RollsRoyceNumeratorHelper(self):
         allData = self.df.copy(deep=True)
@@ -217,9 +245,9 @@ class Distortion(object):
     def RollsRoyceDC60(self):
         """Returns the Rolls-Royce DC60 index
 
-        :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
+        :math:`DC(\\Theta \\;critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`
 
-        :math:`DC(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{q_{avg}}`
+        where
 
         :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
 
@@ -268,11 +296,14 @@ class Distortion(object):
 
         :math:`\\Delta P(\\Theta critical)/\\bar{P} = \\frac{P_{avg}-P_{min},\\Theta^{-}_{c},avg}{P_{avg}}`
 
+        where
+
         :math:`P_{avg}` = The area-weighted mean total pressure over the engine inlet
 
         :math:`P_{min},\\Theta^{-}_{c},avg` = The minimum area-weighted mean total pressure for a sector whose circumferential extent is '\\Theta' critical
 
         :return: Calculated Distortion Index
+
         :rtype: float
         """
         numerator = self.RollsRoyceNumeratorHelper()
@@ -439,38 +470,12 @@ class Distortion(object):
                           'Multiple Per Rev', 'Radial Intensity']
         return output
 
-    def plot_quantity(self, name, ax=None, show=True):
-        """ Plots the first few orthogonal polynomials. See :meth:`~equadratures.plot.plot_orthogonal_polynomials` for full description. """
-        return plot_quantity(self, name)
-
-    def ARP1420RingPAV(self, span):
-        thetas, pressures = self.getRingData(span)
-        thetas = np.concatenate((thetas, [thetas[0] + 2 * np.pi]), axis=0)
-        pressures = np.concatenate((pressures, [pressures[0]]), axis=0)
-        f_interp = lambda xx: np.interp(xx, thetas, pressures)
-        [integral, error] = quad(f_interp, 0, 2 * np.pi, points=thetas)
-        ringAvg = 1 / (2 * np.pi) * integral
-        return ringAvg
-
-    def ARP1420PFAVEqualRingArea(self):
-        spans = self.df['Span'].drop_duplicates()
-        N = spans.size
-        sum = 0
-        for i in spans:
-            sum = sum + self.ARP1420RingPAV(i)
-        PFAV = (1 / N) * sum
-        return PFAV
-
-    def getRingData(self, span):
-        data = self.df.loc[self.df['Span'] == span]
-        thetas = data['Theta'].to_numpy()
-        pressures = data['Total Pressure'].to_numpy()
-        return thetas, pressures
-
     def pDeltaPavg1(self):
         """Returns a simple distortion index
 
         :math:`\\frac{\\Delta P_{max-min}}{\\bar{P}}=\\frac{P_{max}-P_{min}}{P_{avg}}`
+
+        where
 
         :math:`P_{max}` = Maximum inlet total pressure
 
@@ -493,10 +498,11 @@ class Distortion(object):
 
         :math:`\\frac{\\Delta P_{avg-min}}{\\bar{P}}=\\frac{P_{avg}-P_{min}}{P_{avg}}`
 
+        where
+
         :math:`P_{min}` = Minimum inlet total pressure
 
         :math:`P_{avg}` = Average inlet total pressure
-
 
         :return: Calculated Distortion Index
         :rtype: float
@@ -511,7 +517,9 @@ class Distortion(object):
     def NAPCKTheta(self):
         """Returns the Naval Air Propulsion Center KTheta index WORK IN PROGRESS
 
-        :math:`K\\Theta = \\frac{\\frac{\\Theta^{-}}{2\\pi}[\\sqrt{q/P}]_{ref}}{\\sqrt{\\frac{q}{P}/\\frac{\\bar{q}}{\\bar{P}}}}`
+        :math:`K\\Theta = \\frac{\\frac{\\Theta^{-}}{2\\pi}\\left [\\sqrt{q/P}\\right]_{ref}}{\\sqrt{\\frac{q}{P}/\\frac{\\bar{q}}{\\bar{P}}}}`
+
+        where
 
         :math:`\\Theta^{-}` = Circumferential extent of the total pressure region less than the plane average total pressure
 
@@ -531,6 +539,8 @@ class Distortion(object):
         """Returns the AVCO Lycoming DI index WORK IN PROGRESS
 
         :math:`DI = (\\frac{P_{avg}-P_{low\\:avg}}{P_{avg}})\\sqrt{\\overline{M*E*R}}`
+
+        where
 
         :math:`P_{avg}` = Area-weighted average total pressure
 
@@ -555,6 +565,12 @@ class Distortion(object):
         :return: Calculated Distortion Index
         :rtype: float
         """
+
+    def plot_quantity(self, name, ax=None, show=True):
+        """
+        Plots input column name from dataset
+        """
+        return plot_quantity(self, name)
 
     def get_areaWeights(self):
         spans = self.df['Span'].drop_duplicates().to_numpy()
@@ -638,3 +654,24 @@ class Distortion(object):
                  })
             circumferentialAvg = pd.concat([circumferentialAvg, newRow])
         return circumferentialAvg
+    def getRingData(self, span):
+        data = self.df.loc[self.df['Span'] == span]
+        thetas = data['Theta'].to_numpy()
+        pressures = data['Total Pressure'].to_numpy()
+        return thetas, pressures
+    def ARP1420RingPAV(self, span):
+        thetas, pressures = self.getRingData(span)
+        thetas = np.concatenate((thetas, [thetas[0] + 2 * np.pi]), axis=0)
+        pressures = np.concatenate((pressures, [pressures[0]]), axis=0)
+        f_interp = lambda xx: np.interp(xx, thetas, pressures)
+        [integral, error] = quad(f_interp, 0, 2 * np.pi, points=thetas)
+        ringAvg = 1 / (2 * np.pi) * integral
+        return ringAvg
+    def ARP1420PFAVEqualRingArea(self):
+        spans = self.df['Span'].drop_duplicates()
+        N = spans.size
+        sum = 0
+        for i in spans:
+            sum = sum + self.ARP1420RingPAV(i)
+        PFAV = (1 / N) * sum
+        return PFAV
