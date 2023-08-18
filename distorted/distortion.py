@@ -58,6 +58,8 @@ class Distortion(object):
     def PrattAndWhitneyKc2(self):
         print()
     def PWKThetaHelper(self):
+
+
         print()
 
     def PrattAndWhitneyKD2(self):
@@ -97,6 +99,7 @@ class Distortion(object):
         denominatorSum = 0
         numeratorSum = 0
         for s in spans:
+            print(s)
             PAV = self.ARP1420RingPAV(s)
             thetas, pressures = self.getRingData(s)
             thetas = np.concatenate((thetas, [thetas[0] + 2 * np.pi]), axis=0)

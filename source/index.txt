@@ -15,6 +15,7 @@ References
 - SAE (2022), A Methodology for Assessing Inlet Swirl Distortion, AIR5686, Technical report.
 - SAE (2017), Gas Turbine Engine Inlet Flow Distortion Guidelines, ARP1420, Technical report.
 - Annette Flanagan Campbell (1981), An Investigation of Distortion Indices for Prediction of Stalling Behavior in Aircraft Gas Turbine Engines
+- J.P. Murphy & D.G. MacManus (2011), Ground vortex aerodynamics under crosswind conditions
 
 Documentation
 """""""""""""""

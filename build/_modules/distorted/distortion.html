@@ -360,6 +360,8 @@ document.write(`
     <span class="k">def</span> <span class="nf">PrattAndWhitneyKc2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">PWKThetaHelper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+
         <span class="nb">print</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Distortion.PrattAndWhitneyKD2"><a class="viewcode-back" href="../../distortion.html#distorted.distortion.Distortion.PrattAndWhitneyKD2">[docs]</a>    <span class="k">def</span> <span class="nf">PrattAndWhitneyKD2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -399,6 +401,7 @@ document.write(`
         <span class="n">denominatorSum</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">numeratorSum</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spans</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
             <span class="n">PAV</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ARP1420RingPAV</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
             <span class="n">thetas</span><span class="p">,</span> <span class="n">pressures</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getRingData</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
             <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">thetas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
