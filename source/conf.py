@@ -24,8 +24,9 @@ extensions = [
 ] #TODO - prune unused extensions
 master_doc = 'index'
 html_title = 'Distorted'
-html_theme = 'pydata_sphinx_theme'
-language = None
+html_theme = 'sphinxdoc'
+language = 'en'
+numfig = True
 exclude_patterns = [u'_docsbuild', 'Thumbs.db', '.DS_Store']
 source_suffix = '.txt'
 latex_elements = {
@@ -64,11 +65,5 @@ nbsphinx_output_prompt = 'Out[%s]:'
 ##############################
 bibtex_bibfiles = ['references.bib']
 
-# pydata theme options
-#########################
-html_theme_options = {
-    "show_prev_next": False,
-    "search_bar_text": "Search documentation",
-}
 
 autodoc_member_order = 'bysource'

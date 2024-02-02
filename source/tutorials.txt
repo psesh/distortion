@@ -4,6 +4,6 @@ Please see checkout the tutorials below.
 
 .. nbgallery::
 
-   tutorials/Tutorial - Loading and Visualizing Datasets
-   tutorials/Tutorial - Analysis via Distortion Metrics
-   tutorials/Ground Vortex Aerodynamics Paper Figure 10f
+   tutorials/tutorial_1.ipynb
+   tutorials/tutorial_2.ipynb
+   tutorials/tutorial_3.ipynb
