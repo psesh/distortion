@@ -2,7 +2,6 @@ LICENSE
 README.md
 setup.py
 distorted/__init__.py
-distorted/csvToDataframe.py
 distorted/distortion.py
 distorted/plot.py
 distorted.egg-info/PKG-INFO
